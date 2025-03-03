@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+
+        .wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .header {
+            background-color: #1e6ab1;
+            height: 100px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            box-sizing: border-box;
+        }
+
+        .logo {
+            width: 100px;
+            height: auto;
+        }
+
+        .list {
+            display: flex;
+        }
+
+        .list ul {
+            display: flex;
+            flex-direction: row;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .list li {
+            margin: 0 10px;
+        }
+
+        .list a {
+            color: white;
+            text-decoration: none;
+            font-size: 20px;
+        }
+
+        .block {
+            flex: 1;
+        }
+
+        .footer {
+            background-color: #32642d;
+            height: 50px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="wrapper">
+        
+        <div class="header">
+            <img src="../../resourses/logo oppened.svg" alt="Logo" class="logo" href="http://localhost:8080/services/Index.html">
+            <div class="list">
+                <ul>
+                    <li><a href="http://localhost:8080/services/Index.html">Home</a></li>
+                    <li><a href="http://localhost:8080/services/Services.html">Services</a></li>
+                    <li><a href="http://localhost:8080/services/About.html">About</a></li>
+                    <li><a href="http://localhost:8080/services/Contact.html">Contact</a></li>
+                </ul>   
+            </div>
+        </div>
+
+        <div class="block">
+        </div>
+
+        <div class="footer">
+        </div>
+    </div>
+</body>
+</html>
