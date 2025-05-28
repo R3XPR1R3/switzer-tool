@@ -1,28 +1,30 @@
-.converters-categories,
-.converters-categories * {
+
+@import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap');
+ .converters-categories,
+ .converters-categories * {
   box-sizing: border-box;
 }
-.converters-categories {
+ .converters-categories {
   height: 530px;
   position: relative;
 }
-.rectangle-17 {
+ #popup-converters .rectangle-17 {
   background: linear-gradient(
     152.29deg,
-    rgba(65, 131, 146, 1) 0%,
-    rgba(44, 95, 106, 1) 100%
+    #24752A 0%,
+    #35B443 100%
   );
   border-style: solid;
   border-color: #4c5374;
   border-width: 5px;
   width: 419.94px;
   height: 530px;
-  position: absolute;
+  position: relative;
   left: 0px;
   top: 0px;
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
 }
-._262-c-9-d-5-e-685-d-4-ca-3-bc-32-faf-5-af-2-bb-572-1 {
+ ._262-c-9-d-5-e-685-d-4-ca-3-bc-32-faf-5-af-2-bb-572-1 {
   opacity: 0.37;
   width: 419.99px;
   height: 528.35px;
@@ -32,12 +34,12 @@
   object-fit: cover;
   aspect-ratio: 419.99/528.35;
 }
-.display {
+ .display {
   width: 338.5px;
   height: 436px;
   position: static;
 }
-.rectangle-18 {
+ .rectangle-18 {
   background: #000000;
   border-width: 5px;
   border-style: solid;
@@ -54,17 +56,17 @@
   top: 56px;
   box-shadow: 0px 0px 21.5px 2px rgba(255, 249, 249, 0.25);
 }
-.group-19 {
+  .group-19 {
   width: 320.58px;
   height: 412px;
   position: static;
 }
-.group-2 {
+  .group-2 {
   width: 320.58px;
   height: 65.61px;
   position: static;
 }
-.rectangle-8 {
+  .rectangle-8 {
   width: 320.58px;
   height: 65.61px;
   position: absolute;
@@ -72,7 +74,7 @@
   top: 68px;
   overflow: visible;
 }
-.rectangle-7 {
+  .rectangle-7 {
   width: 307.6px;
   height: 49.6px;
   position: absolute;
@@ -80,15 +82,15 @@
   top: 76px;
   overflow: visible;
 }
-.documents {
+  .documents {
   color: #96ff81;
   text-align: left;
-  font-family: "PixelifySans-Regular", sans-serif;
+  font-family: "Pixelify Sans", sans-serif;
   font-size: 32px;
   line-height: 66%;
   font-weight: 400;
   position: absolute;
-  left: 56.4px;
+  left: 60px;
   top: 75.08px;
   width: 307.33px;
   height: 49.59px;
@@ -98,12 +100,12 @@
   align-items: center;
   justify-content: flex-start;
 }
-.group-8 {
+  .group-8 {
   width: 320.58px;
   height: 65.61px;
   position: static;
 }
-.rectangle-82 {
+  .rectangle-82 {
   width: 320.58px;
   height: 65.61px;
   position: absolute;
@@ -111,7 +113,7 @@
   top: 125.73px;
   overflow: visible;
 }
-.rectangle-72 {
+  .rectangle-72 {
   width: 307.6px;
   height: 49.6px;
   position: absolute;
@@ -119,15 +121,15 @@
   top: 133.73px;
   overflow: visible;
 }
-.video {
+  .video {
   color: #96ff81;
   text-align: left;
-  font-family: "PixelifySans-Regular", sans-serif;
+  font-family: "Pixelify Sans", sans-serif;
   font-size: 32px;
   line-height: 66%;
   font-weight: 400;
   position: absolute;
-  left: 56.4px;
+  left: 60px;
   top: 132.82px;
   width: 307.33px;
   height: 49.59px;
@@ -161,12 +163,12 @@
 .images {
   color: #96ff81;
   text-align: left;
-  font-family: "PixelifySans-Regular", sans-serif;
+  font-family: "Pixelify Sans", sans-serif;
   font-size: 32px;
   line-height: 66%;
   font-weight: 400;
   position: absolute;
-  left: 56.4px;
+  left: 60px;
   top: 190.55px;
   width: 307.33px;
   height: 49.59px;
@@ -200,12 +202,12 @@
 .audio {
   color: #96ff81;
   text-align: left;
-  font-family: "PixelifySans-Regular", sans-serif;
+  font-family: "Pixelify Sans", sans-serif;
   font-size: 32px;
   line-height: 66%;
   font-weight: 400;
   position: absolute;
-  left: 56.4px;
+  left: 60px;
   top: 248.28px;
   width: 307.33px;
   height: 49.59px;
@@ -239,12 +241,12 @@
 .tables {
   color: #96ff81;
   text-align: left;
-  font-family: "PixelifySans-Regular", sans-serif;
+  font-family: "Pixelify Sans", sans-serif;
   font-size: 32px;
   line-height: 66%;
   font-weight: 400;
   position: absolute;
-  left: 56.4px;
+  left: 60px;
   top: 306.01px;
   width: 307.33px;
   height: 49.59px;
@@ -278,12 +280,12 @@
 .archives {
   color: #96ff81;
   text-align: left;
-  font-family: "PixelifySans-Regular", sans-serif;
+  font-family: "Pixelify Sans", sans-serif;
   font-size: 32px;
   line-height: 66%;
   font-weight: 400;
   position: absolute;
-  left: 56.4px;
+  left: 60px;
   top: 363.75px;
   width: 307.33px;
   height: 49.59px;
@@ -317,12 +319,12 @@
 .more {
   color: #96ff81;
   text-align: left;
-  font-family: "PixelifySans-Regular", sans-serif;
+  font-family: "Pixelify Sans", sans-serif;
   font-size: 32px;
   line-height: 66%;
   font-weight: 400;
   position: absolute;
-  left: 56.4px;
+  left: 60px;
   top: 421.48px;
   width: 307.33px;
   height: 49.59px;
@@ -333,7 +335,8 @@
   justify-content: flex-start;
 }
 .output-1 {
-  opacity: 0.02;
+  pointer-events: none;
+  opacity: 2;
   width: 338.38px;
   height: 434.64px;
   position: absolute;
@@ -343,6 +346,7 @@
   filter: blur(1.8px);
   object-fit: cover;
   aspect-ratio: 338.38/434.64;
+  z-index: 1;
 }
 .contacts {
   width: 36.52px;
@@ -489,8 +493,9 @@
   box-shadow: 0px 4px 5px 1px rgba(0, 0, 0, 0.25);
   filter: blur(0.65px);
 }
-._727770-b-6-1053-4832-b-6-f-8-7398-d-0-fac-757-1 {
-  opacity: 0.05;
+._727770-b-6-1053-4832-b-6-f-8-7398-d-0-fac-757-1
+ {
+  pointer-events: none;
   width: 327.01px;
   height: 421.42px;
   position: absolute;
@@ -516,3 +521,74 @@
   align-items: center;
   justify-content: flex-start;
 }
+
+.group-2:hover .documents {
+  color: #ffffff;
+  transition: color 0.001s ease-in-out;
+
+}
+
+.group-2:hover .documents::after {
+  content: ' <';
+  color: #ffffff;
+}
+
+.group-8:hover .video {
+  color: #ffffff;
+  transition: color 0.001s ease-in-out;
+
+}
+.group-8:hover .video::after {
+  content: ' <';
+  color: #ffffff;
+}
+
+.group-9:hover .images {
+  color: #ffffff;
+  transition: color 0.001s ease-in-out;
+
+}
+.group-9:hover .images::after {
+  content: ' <';
+  color: #ffffff;
+}
+.group-10:hover .audio {
+  color: #ffffff;
+  transition: color 0.001s ease-in-out;
+
+}
+.group-10:hover .audio::after {
+  content: ' <';
+  color: #ffffff;
+}
+.group-11:hover .tables {
+  color: #ffffff;
+  transition: color 0.001s ease-in-out;
+
+}
+.group-11:hover .tables::after {
+  content: ' <';
+  color: #ffffff;
+}
+.group-12:hover .archives {
+  color: #ffffff;
+  transition: color 0.001s ease-in-out;
+
+}
+.group-12:hover .archives::after {
+  content: ' <';
+  color: #ffffff;
+}
+.group-13:hover .more {
+  color: #ffffff;
+  transition: color 0.001s ease-in-out;
+
+}
+
+
+.group-13:hover .more::after {
+  content: ' <';
+  color: #ffffff;
+
+}
+

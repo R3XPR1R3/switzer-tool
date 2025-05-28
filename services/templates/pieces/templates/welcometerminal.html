@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <link rel="preload" href="welcome-sign.png" as="image">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Allerta+Stencil&family=Oswald&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Dhurjati&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="converters_display.css">     
+  <link rel="stylesheet" href="editors_display.css">
+  <link rel="stylesheet" href="tools_display.css">
+
+  <link rel="stylesheet" href="infoblock.css">
+  <title>SwitzerTool</title>
+  <style>   
+  a {
+  text-decoration: none; /* убирает подчеркивание */
+  color: inherit;         /* цвет наследуется от родителя */
+}
+    body, html {
+      margin: 0;
+      padding: 0;
+
+    }
+.popups {
+  margin: 12;
+  pointer-events: none; /* по умолчанию контейнер игнорирует указатель */
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 12px;
+
+  justify-content: flex-end;
+  align-items: flex-start;
+  transform-origin:  top left;
+  top: 65px;
+  margin: 12px;
+  padding: 12px;
+  z-index: -1;
+}
+
+  
+
+.category-popup {
+  position: absolute;
+  top: -700px; /* спрятан наверху */
+  width: auto;
+  
+  pointer-events: none;
+  opacity: 1;
+  pointer-events: auto; /* а сами попапы — интерактивны */
+  transition: top 0.3s ease, opacity 0.3s ease, visibility 0.3s ease;
+  z-index: -1;
+}
+#popup-converters {
+  right: -243px;
+}
+
+#popup-editors {
+  right: -498px;
+}
+#popup-tools {
+  right: -751px;
+}
+
+
+
+
+
+
+
+    .sign {
+      top: 450px;
+      position: relative;
+      width: 1116px;
+      height: 611px;
+      font-family: 'Allerta Stencil', sans-serif;
+      font-size: 48px;
+      line-height: 83%;
+      letter-spacing: 0.02em;
+      background: radial-gradient(circle, #9E4949, #691414);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      box-sizing: border-box;
+    }
+
+    .sign img {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+      transform: scale(1.108);
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .sign h1, .sign h2, .sign p {
+      position: relative;
+      color: #FBFBFB;
+      margin: 10px 0;
+      z-index: 1;
+    }
+
+
+    #header {
+  position: fixed;
+  top: -215px; /* Скрыт наверху */
+  left: 0;
+  width: 100%;
+  height: 215px;
+  transition: top 0.1s ease;
+  z-index: 10;
+  display: flex;
+  justify-content: center; /* Центрируем кнопки */
+  align-items: flex-end; /* Прижимаем кнопки вниз */
+  gap: 10px; /* Отступы между кнопками */
+}
+
+    .rectangle-9 {
+
+      background: #9e4949;
+      width: 100%;
+      height: 169px;
+      position: absolute;
+      display: flex;
+      
+      justify-content: right; /* Центрируем кнопки */
+      align-items: center; /* Прижимаем кнопки вниз */
+      top: 46px;
+      box-shadow: 0 18px 23px rgba(0,0,0,0.25);
+    }
+
+    .rectangle-10 {
+      background: #d9d9d9;
+      width: 100%;
+      height: 46px;
+      position: absolute;
+      top: 0;
+    }
+
+
+
+    /* Нижняя панель-язычок */
+    .panel {
+      position: absolute;
+      bottom: -40px;
+      width: 100%;
+      height: 40px;
+      background: repeating-linear-gradient(-45deg, #ffcc00 0, #ffcc00 20px, #000 20px, #000 40px), 
+              url('https://www.transparenttextures.com/patterns/black-linen.png');
+  background-blend-mode: multiply;
+
+      box-shadow: 0 15px 5px 10px rgba(0,0,0,0.5);
+      cursor: pointer;
+    }
+
+.panel::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image:
+    url('https://www.transparenttextures.com/patterns/grunge-wall.png'); /* грязно-потёртая текстура */
+  background-repeat: repeat;
+  mix-blend-mode: multiply; /* чтобы затемнить и придать реализма */
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+
+
+
+#header img.texture {
+      position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 215px;
+  opacity: 0.8;
+  object-fit: fill; /* картинка растягивается без обрезки */
+  mix-blend-mode: hard-light;
+  image-rendering: crisp-edges; /* убирает мыло */
+  z-index: 0;
+}
+
+
+
+#header {
+  position: fixed;
+  top: -215px;
+  left: 0;
+  width: 100%;
+  height: 215px;
+  transition: top 0.1s ease;
+  z-index: 10;
+  display: flex;
+  justify-content: center; /* Центрируем контейнер */
+  align-items: flex-end;
+  
+}
+
+.menu-container {
+  display: flex;
+  
+  justify-content: flex-start; /* Кнопки выстроены слева */
+  align-items: center;
+  gap: 12px; /* Отступы между кнопками */
+  width: 747px; /* Ширина всего блока */
+  margin: 12px;
+}
+/* Универсальные стили для всех кнопок */
+.menu-button {
+  width: 241px;
+  opacity: 1;
+  height: 135px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  z-index: 2;
+  cursor: pointer;
+}
+
+
+/* Фон */
+.menu-button .rectangle-bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(16, 16, 16, 1) 0%, rgba(40, 40, 40, 1) 100%);
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+/* Внутренний фон — OFF по умолчанию */
+.menu-button .rectangle-inner {
+  position: absolute;
+  inset: 6px;
+  background: #1d964f;
+  border: 1px solid rgba(133, 133, 133, 0.54);
+  box-shadow:
+    inset 0px 0px 12.9px 5px rgba(255, 255, 255, 0.25),
+    0px 4px 4px 3px rgba(0, 0, 0, 0.25),
+    inset 0px 4px 2.3px 2px rgba(0, 0, 0, 0.25),
+    0px 0px 6.5px 3px rgba(69, 215, 86, 0.25);
+  transition: all 0.01s ease;
+}
+@keyframes industrial-flicker {
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+    box-shadow: 0 0 6px #0dcd5d, 0 0 12px #0dcd5d;
+
+  }
+  20%, 22%, 24%, 55% {
+    box-shadow: 0 0 3px #0dcd5d;
+    
+  }
+  26% {
+    box-shadow: 0 0 22px #3aff97;
+  
+  }
+  70% {
+    box-shadow: 0 0 8px #0dcd5d;
+
+  }
+  90% {
+    box-shadow: 0 0 30px #2eff8c;
+
+  }
+}
+
+/* Активное состояние при наведении */
+.menu-button.hover-active .rectangle-inner {
+  background: #0dcd5d;
+  animation: industrial-flicker 0.0003s infinite;
+}
+.menu-button.hover-active .textura {
+  opacity: 0.035;
+}
+/* Текст — тусклый по умолчанию */
+.menu-button .label {
+  position: relative;
+  color: #ded1d1;
+  text-align: center;
+  font-family: "Oswald", sans-serif;
+  font-size: 40px;
+  font-weight: 400;
+  z-index: 2;
+  transition: color 0.2s ease;
+}
+
+/* Яркий текст при наведении */
+.menu-button.hover-active .label {
+  color: #ffffff;
+}
+
+/* Фоновая текстура */
+.menu-button img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.02;
+  filter: blur(1.4px);
+  z-index: 1;
+}
+
+
+
+._1657255 {
+  opacity: 0.02;
+  width: 226.87px;
+  height: 120.87px;
+  position: absolute;
+  left: 1193.88px;
+  top: 71.52px;
+  filter: blur(1.4px);
+  object-fit: cover;
+  aspect-ratio: 226.87/120.87;
+}
+
+
+
+
+
+
+
+
+  </style>
+</head>
+
+<body>
+
+
+
+
+    <div id="welcome" class="sign">
+      <img src="welcome-sign.png" alt="Welcome Sign" />
+      <h1 style="
+      position: relative;
+      top: 0px;
+      line-height: 83%;
+      font-size: 96px;
+      font-weight: 400;
+      letter-spacing: 100%;
+      color: #FBFBFB;
+      opacity: 0.65;
+      ">welcome to <br>SwitzerTool</h1>
+      <h2 style="
+      
+      position: relative;
+      font-weight: 400;
+      text-align: center;
+      font-size: 70px;
+      line-height: 103%;
+      letter-spacing: 2%;
+      margin: top 0px left 10px; 
+      opacity: 0.65;
+      ">
+      "Precision sharp, performance tight - SwitzerTool will get it right!"</h2>
+      <p style="
+      position: relative;
+      opacity: 0.65;
+      font-size: 48px;
+      margin-top: 40px;
+      color: #CEDA30;
+      ">NAVIGATION IN TERMINAL BELOW</p>
+      <br/>
+      <p style="
+      opacity: 0.65;
+      color:#CEDA30;
+      ">VVV</p>
+    </div>
+    
+    
+    
+  
+  
+  
+</body>
+</html>
