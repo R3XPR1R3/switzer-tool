@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <link rel="preload" href="welcome-sign.png" as="image">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Allerta+Stencil&family=Oswald&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Dhurjati&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/converters_display.css">     
+  <link rel="stylesheet" href="styles/editors_display.css">
+  <link rel="stylesheet" href="styles/tools_display.css">
+
+  <link rel="stylesheet" href="styles/infoblock.css">
+  <title>SwitzerTool</title>
+  <style>   
+  a {
+  text-decoration: none; /* убирает подчеркивание */
+  color: inherit;         /* цвет наследуется от родителя */
+}
+    body, html {
+      margin: 0;
+      padding: 0;
+
+    }
+.popups {
+  margin: 12;
+  pointer-events: none; /* по умолчанию контейнер игнорирует указатель */
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 12px;
+
+  justify-content: flex-end;
+  align-items: flex-start;
+  transform-origin:  top left;
+  top: 65px;
+  margin: 12px;
+  padding: 12px;
+  z-index: -1;
+}
+
+.category-popup {
+  position: absolute;
+  top: -700px; /* спрятан наверху */
+  width: auto;
+  
+  pointer-events: none;
+  opacity: 1;
+  pointer-events: auto; /* а сами попапы — интерактивны */
+  transition: top 0.3s ease, opacity 0.3s ease, visibility 0.3s ease;
+  z-index: -1;
+}
+#popup-converters {
+  right: -243px;
+}
+
+#popup-editors {
+  right: -498px;
+}
+#popup-tools {
+  right: -751px;
+}
+
+
+
+
+
+    #background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2700px;
+      z-index: -1;
+      background-image: url("body.png");
+      background-size: 1440px 2000px;
+      transform: scaleX(-1) scaleY(-1);
+    }
+
+    .sign {
+      position: relative;
+      width: 1116px;
+      height: 611px;
+      font-family: 'Allerta Stencil', sans-serif;
+      font-size: 48px;
+      line-height: 83%;
+      letter-spacing: 0.02em;
+      background: radial-gradient(circle, #9E4949, #691414);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      box-sizing: border-box;
+    }
+
+    .sign img {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+      transform: scale(1.108);
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .sign h1, .sign h2, .sign p {
+      position: relative;
+      color: #FBFBFB;
+      margin: 10px 0;
+      z-index: 1;
+    }
+
+    #wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+    }
+
+    #header {
+  position: fixed;
+  top: -215px; /* Скрыт наверху */
+  left: 0;
+  width: 100%;
+  height: 215px;
+  transition: top 0.1s ease;
+  z-index: 10;
+  display: flex;
+  justify-content: center; /* Центрируем кнопки */
+  align-items: flex-end; /* Прижимаем кнопки вниз */
+  gap: 10px; /* Отступы между кнопками */
+}
+
+    .rectangle-9 {
+
+      background: #9e4949;
+      width: 100%;
+      height: 169px;
+      position: absolute;
+      display: flex;
+      
+      justify-content: right; /* Центрируем кнопки */
+      align-items: center; /* Прижимаем кнопки вниз */
+      top: 46px;
+      box-shadow: 0 18px 23px rgba(0,0,0,0.25);
+    }
+
+    .rectangle-10 {
+      background: #d9d9d9;
+      width: 100%;
+      height: 46px;
+      position: absolute;
+      top: 0;
+    }
+
+
+
+    /* Нижняя панель-язычок */
+    .panel {
+      position: absolute;
+      bottom: -40px;
+      width: 100%;
+      height: 40px;
+      background: repeating-linear-gradient(-45deg, #ffcc00 0, #ffcc00 20px, #000 20px, #000 40px), 
+              url('https://www.transparenttextures.com/patterns/black-linen.png');
+  background-blend-mode: multiply;
+
+      box-shadow: 0 15px 5px 10px rgba(0,0,0,0.5);
+      cursor: pointer;
+    }
+
+.panel::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image:
+    url('https://www.transparenttextures.com/patterns/grunge-wall.png'); /* грязно-потёртая текстура */
+  background-repeat: repeat;
+  mix-blend-mode: multiply; /* чтобы затемнить и придать реализма */
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+
+
+
+#header img.texture {
+      position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 215px;
+  opacity: 0.8;
+  object-fit: fill; /* картинка растягивается без обрезки */
+  mix-blend-mode: hard-light;
+  image-rendering: crisp-edges; /* убирает мыло */
+  z-index: 0;
+}
+
+
+
+#header {
+  position: fixed;
+  top: -215px;
+  left: 0;
+  width: 100%;
+  height: 215px;
+  transition: top 0.1s ease;
+  z-index: 10;
+  display: flex;
+  justify-content: center; /* Центрируем контейнер */
+  align-items: flex-end;
+  
+}
+
+.menu-container {
+  display: flex;
+  
+  justify-content: flex-start; /* Кнопки выстроены слева */
+  align-items: center;
+  gap: 12px; /* Отступы между кнопками */
+  width: 747px; /* Ширина всего блока */
+  margin: 12px;
+}
+/* Универсальные стили для всех кнопок */
+.menu-button {
+  width: 241px;
+  opacity: 1;
+  height: 135px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  z-index: 2;
+  cursor: pointer;
+}
+
+
+/* Фон */
+.menu-button .rectangle-bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(16, 16, 16, 1) 0%, rgba(40, 40, 40, 1) 100%);
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+/* Внутренний фон — OFF по умолчанию */
+.menu-button .rectangle-inner {
+  position: absolute;
+  inset: 6px;
+  background: #1d964f;
+  border: 1px solid rgba(133, 133, 133, 0.54);
+  box-shadow:
+    inset 0px 0px 12.9px 5px rgba(255, 255, 255, 0.25),
+    0px 4px 4px 3px rgba(0, 0, 0, 0.25),
+    inset 0px 4px 2.3px 2px rgba(0, 0, 0, 0.25),
+    0px 0px 6.5px 3px rgba(69, 215, 86, 0.25);
+  transition: all 0.01s ease;
+}
+@keyframes industrial-flicker {
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+    box-shadow: 0 0 6px #0dcd5d, 0 0 12px #0dcd5d;
+
+  }
+  20%, 22%, 24%, 55% {
+    box-shadow: 0 0 3px #0dcd5d;
+    
+  }
+  26% {
+    box-shadow: 0 0 22px #3aff97;
+  
+  }
+  70% {
+    box-shadow: 0 0 8px #0dcd5d;
+
+  }
+  90% {
+    box-shadow: 0 0 30px #2eff8c;
+
+  }
+}
+
+/* Активное состояние при наведении */
+.menu-button.hover-active .rectangle-inner {
+  background: #0dcd5d;
+  animation: industrial-flicker 0.0003s infinite;
+}
+.menu-button.hover-active .textura {
+  opacity: 0.035;
+}
+/* Текст — тусклый по умолчанию */
+.menu-button .label {
+  position: relative;
+  color: #ded1d1;
+  text-align: center;
+  font-family: "Oswald", sans-serif;
+  font-size: 40px;
+  font-weight: 400;
+  z-index: 2;
+  transition: color 0.2s ease;
+}
+
+/* Яркий текст при наведении */
+.menu-button.hover-active .label {
+  color: #ffffff;
+}
+
+/* Фоновая текстура */
+.menu-button img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.02;
+  filter: blur(1.4px);
+  z-index: 1;
+}
+
+
+
+._1657255 {
+  opacity: 0.02;
+  width: 226.87px;
+  height: 120.87px;
+  position: absolute;
+  left: 1193.88px;
+  top: 71.52px;
+  filter: blur(1.4px);
+  object-fit: cover;
+  aspect-ratio: 226.87/120.87;
+}
+
+
+
+
+
+
+
+
+  </style>
+</head>
+
+<body>
+  <div id="background"></div>
+
+  <div id="wrapper">
+    <div id="header">
+      
+      <div class="rectangle-9">      
+        <div class="menu-container">
+          <div class="menu-button"  id="btn-converters">
+            <div class="rectangle-bg"></div>
+            <div class="rectangle-inner"></div>
+            <div class="label">converters</div>
+            <img class="textura" src="1657255f-f106-435c-9e21-ba0f6bfc58b0.png" />
+          </div>
+        
+          <div class="menu-button"  id="btn-editors">
+            <div class="rectangle-bg"></div>
+            <div class="rectangle-inner"></div>
+            <div class="label">editors</div>
+            <img class="textura" src="1657255f-f106-435c-9e21-ba0f6bfc58b0.png" />
+          </div>
+        
+          <div class="menu-button"  id="btn-tools">
+            <div class="rectangle-bg"></div>
+            <div class="rectangle-inner"></div>
+            <div class="label">tools</div>
+            <img class="textura" src="1657255f-f106-435c-9e21-ba0f6bfc58b0.png" />
+          </div>
+        </div>
+      </div>
+      <div class="rectangle-10"></div>
+      <img class="texture" src="metal_texture_1.png" />
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const buttons = {
+    'btn-converters': 'popup-converters',
+    'btn-editors': 'popup-editors',
+    'btn-tools': 'popup-tools'
+  };
+
+  const popups = {
+    'popup-converters': document.getElementById('popup-converters'),
+    'popup-editors': document.getElementById('popup-editors'),
+    'popup-tools': document.getElementById('popup-tools')
+  };
+
+  const buttonElems = {
+    'btn-converters': document.getElementById('btn-converters'),
+    'btn-editors': document.getElementById('btn-editors'),
+    'btn-tools': document.getElementById('btn-tools')
+  };
+
+  let currentActive = null;
+  const popupPosition = "0px";
+  const hiddenPosition = "-700px";
+
+  function activatePopup(btnId) {
+  Object.keys(buttons).forEach(id => {
+    const popupId = buttons[id];
+    const popup = popups[popupId];
+    const button = buttonElems[id];
+
+    if (id === btnId) {
+      popup.style.top = "0px";
+      popup.style.opacity = "1";
+      popup.style.visibility = "visible";
+      button.classList.add('hover-active');
+    } else {
+      popup.style.top = "-700px";
+      popup.style.opacity = "0";
+      popup.style.visibility = "hidden";
+      button.classList.remove('hover-active');
+    }
+  });
+
+  currentActive = btnId; // даже если уже активна — мы переустанавливаем
+}
+
+
+  Object.keys(buttonElems).forEach(btnId => {
+    buttonElems[btnId].addEventListener("mouseenter", () => {
+      activatePopup(btnId);
+    });
+  });
+
+  // Инициализация первой панели по умолчанию
+
+});
+
+</script>
+    
+
+
+    
+      <div class="panel"></div>
+      <div class="popups">
+        <!-- Панель редакторов -->
+        <div id="popup-converters" class="category-popup">
+          <div class="converters-categories">
+            <div class="rectangle-17"></div>
+            <img
+              class="_262-c-9-d-5-e-685-d-4-ca-3-bc-32-faf-5-af-2-bb-572-1"
+              src="262c9d5.png"
+            />
+            <div class="display">
+              <div class="rectangle-18"></div>
+<div class="group-19">
+  <div class="group-2">
+    <img class="rectangle-8" src="Rectangle 8.svg" />
+    <img class="rectangle-7" src="Rectangle 7.svg" />
+    <div class="documents">.DOCUMENTS</div>
+  </div>
+  <div class="group-8 popup-option">
+    <img class="rectangle-82" src="Rectangle 8.svg" />
+    <img class="rectangle-72" src="Rectangle 7.svg"
+ />
+    <div class="video">.VIDEO</div>
+  </div>
+  <div class="group-9">
+    <img class="rectangle-83" src="Rectangle 8.svg" />
+    <img class="rectangle-73" src="Rectangle 7.svg"
+ />
+    <div class="images">.IMAGES</div>
+  </div>
+  <div class="group-10">
+    <img class="rectangle-84" src="Rectangle 8.svg" />
+    <img class="rectangle-74" src="Rectangle 7.svg"
+ />
+    <div class="audio">.AUDIO</div>
+  </div>
+  <div class="group-11">
+    <img class="rectangle-85" src="Rectangle 8.svg" />
+    <img class="rectangle-75" src="Rectangle 7.svg"
+ />
+    <div class="tables">.TABLES</div>
+  </div>
+  <div class="group-12">
+    <img class="rectangle-86" src="Rectangle 8.svg" />
+    <img class="rectangle-76" src="Rectangle 7.svg"
+ />
+    <div class="archives">.ARCHIVES</div>
+  </div>
+  <div class="group-13">
+    <img class="rectangle-87" src="Rectangle 8.svg" />
+    <img class="rectangle-77" src="Rectangle 7.svg"
+ />
+    <div class="more">.MORE</div>
+  </div>
+</div>
+
+              <img class="output-1" src="output1.png" />
+            </div>
+            <div class="contacts">
+              <div class="ellipse-9"></div>
+              <div class="ellipse-4"></div>
+            </div>
+            <div class="contacts">
+              <div class="ellipse-92"></div>
+              <div class="ellipse-42"></div>
+            </div>
+            <div class="contacts">
+              <div class="ellipse-93"></div>
+              <div class="ellipse-43"></div>
+            </div>
+            <div class="contacts">
+              <div class="ellipse-94"></div>
+              <div class="ellipse-44"></div>
+            </div>
+            <div class="contacts">
+              <div class="ellipse-95"></div>
+              <div class="ellipse-45"></div>
+            </div>
+            <img
+              class="_727770-b-6-1053-4832-b-6-f-8-7398-d-0-fac-757-1"
+              src="_727770.png"
+            />
+            <div class="convertors">converters</div>
+          </div>
+        </div>
+        <!-- Панель редакторов -->          
+        <div id="popup-editors" class="category-popup">
+          <div class="editors-categories">
+            <div class="rectangle-17"></div>
+            <img
+              class="_262-c-9-d-5-e-685-d-4-ca-3-bc-32-faf-5-af-2-bb-572-1"
+              src="262c9d5.png"
+            />
+            <div class="display">
+              <div class="rectangle-18"></div>
+<div class="group-19">
+  <div class="group-2">
+    <img class="rectangle-8" src="Rectangle 8.svg" />
+    <img class="rectangle-7" src="Rectangle 7.svg" />
+    
+    
+    <a href="https://google.com" class="documents">.DOCUMENTS</a>
+  
+  </div>
+  <div class="group-8 popup-option">
+    <img class="rectangle-82" src="Rectangle 8.svg" />
+    <img class="rectangle-72" src="Rectangle 7.svg"
+ />
+    <a href="https://google.com" class="video">.VIDEO</a>
+  </div>
+  <div class="group-9">
+    <img class="rectangle-83" src="Rectangle 8.svg" />
+    <img class="rectangle-73" src="Rectangle 7.svg"
+ />
+    <a href="https://google.com" class="images">.IMAGES</a>
+  </div>
+  <div class="group-10">
+    <img class="rectangle-84" src="Rectangle 8.svg" />
+    <img class="rectangle-74" src="Rectangle 7.svg"
+ />
+    <a href="https://google.com" class="audio">.AUDIO</a>
+  </div>
+  <div class="group-11">
+    <img class="rectangle-85" src="Rectangle 8.svg" />
+    <img class="rectangle-75" src="Rectangle 7.svg"
+ />
+    <a href="https://google.com" class="tables">.TABLES</a>
+  </div>
+  <div class="group-12">
+    <img class="rectangle-86" src="Rectangle 8.svg" />
+    <img class="rectangle-76" src="Rectangle 7.svg"
+ />
+    <a href="https://google.com" class="archives">.CODE</a>
+  </div>
+  <div class="group-13">
+    <img class="rectangle-87" src="Rectangle 8.svg" />
+    <img class="rectangle-77" src="Rectangle 7.svg"
+ />
+    <div class="more">.MORE</div>
+  </div>
+</div>
+
+              <img class="output-1" src="output1.png" />
+            </div>
+            <div class="contacts">
+              <div class="ellipse-9"></div>
+              <div class="ellipse-4"></div>
+            </div>
+            <div class="contacts">
+              <div class="ellipse-92"></div>
+              <div class="ellipse-42"></div>
+            </div>
+            <div class="contacts">
+              <div class="ellipse-93"></div>
+              <div class="ellipse-43"></div>
+            </div>
+            <div class="contacts">
+              <div class="ellipse-94"></div>
+              <div class="ellipse-44"></div>
+            </div>
+            <div class="contacts">
+              <div class="ellipse-95"></div>
+              <div class="ellipse-45"></div>
+            </div>
+            <img
+              class="_727770-b-6-1053-4832-b-6-f-8-7398-d-0-fac-757-1"
+              src="_727770.png"
+            />
+            <div class="convertors">editors</div>
+          </div>
+        </div>
+
+        <!-- Панель инструментов -->
+        <div id="popup-tools" class="category-popup" >
+          <div class="tools-categories">
+            <div class="rectangle-17"></div>
+            <img
+              class="_262-c-9-d-5-e-685-d-4-ca-3-bc-32-faf-5-af-2-bb-572-1"
+              src="262c9d5.png"
+            />
+            <div class="display">
+              <div class="rectangle-18"></div>
+<div class="group-19">
+  <div class="group-2">
+    <img class="rectangle-8" src="Rectangle 8.svg" />
+    <img class="rectangle-7" src="Rectangle 7.svg" />
+    
+    
+    <a href="https://google.com" class="documents">.DOCUMENTS</a>
+  
+  </div>
+  <div class="group-8 popup-option">
+    <img class="rectangle-82" src="Rectangle 8.svg" />
+    <img class="rectangle-72" src="Rectangle 7.svg"
+ />
+    <a href="https://google.com" class="video">.VIDEO</a>
+  </div>
+  <div class="group-9">
+    <img class="rectangle-83" src="Rectangle 8.svg" />
+    <img class="rectangle-73" src="Rectangle 7.svg"
+ />
+    <a href="https://google.com" class="images">.IMAGES</a>
+  </div>
+  <div class="group-10">
+    <img class="rectangle-84" src="Rectangle 8.svg" />
+    <img class="rectangle-74" src="Rectangle 7.svg"
+ />
+    <a href="https://google.com" class="audio">.AUDIO</a>
+  </div>
+  <div class="group-11">
+    <img class="rectangle-85" src="Rectangle 8.svg" />
+    <img class="rectangle-75" src="Rectangle 7.svg"
+ />
+    <a href="https://google.com" class="tables">.TABLES</a>
+  </div>
+  <div class="group-12">
+    <img class="rectangle-86" src="Rectangle 8.svg" />
+    <img class="rectangle-76" src="Rectangle 7.svg"
+ />
+    <a href="https://google.com" class="archives">.CODE</a>
+  </div>
+  <div class="group-13">
+    <img class="rectangle-87" src="Rectangle 8.svg" />
+    <img class="rectangle-77" src="Rectangle 7.svg"
+ />
+    <div class="more">.MORE</div>
+  </div>
+</div>
+
+              <img class="output-1" src="output1.png" />
+            </div>
+            <div class="contacts">
+              <div class="ellipse-9"></div>
+              <div class="ellipse-4"></div>
+            </div>
+            <div class="contacts">
+              <div class="ellipse-92"></div>
+              <div class="ellipse-42"></div>
+            </div>
+            <div class="contacts">
+              <div class="ellipse-93"></div>
+              <div class="ellipse-43"></div>
+            </div>
+            <div class="contacts">
+              <div class="ellipse-94"></div>
+              <div class="ellipse-44"></div>
+            </div>
+            <div class="contacts">
+              <div class="ellipse-95"></div>
+              <div class="ellipse-45"></div>
+            </div>
+            <img
+              class="_727770-b-6-1053-4832-b-6-f-8-7398-d-0-fac-757-1"
+              src="_727770.png"
+            />
+            <div class="convertors">tools</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div id="welcome" class="sign">
+      <img src="welcome-sign.png" alt="Welcome Sign" />
+      <h1 style="
+      top: 0px;
+      line-height: 83%;
+      font-size: 96px;
+      font-weight: 400;
+      letter-spacing: 100%;
+      color: #FBFBFB;
+      opacity: 0.65;
+      ">welcome to <br>SwitzerTool</h1>
+      <h2 style="
+      
+      position: relative;
+      font-weight: 400;
+      text-align: center;
+      font-size: 70px;
+      line-height: 103%;
+      letter-spacing: 2%;
+      margin: top 0px left 10px; 
+      opacity: 0.65;
+      ">
+      "Precision sharp, performance tight - SwitzerTool will get it right!"</h2>
+      <p style="
+      position: relative;
+      opacity: 0.65;
+      font-size: 48px;
+      margin-top: 40px;
+      color: #CEDA30;
+      ">NAVIGATION IN TERMINAL BELOW</p>
+      <br/>
+      <p style="
+      opacity: 0.65;
+      color:#CEDA30;
+      ">VVV</p>
+    </div>
+
+  </div>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const header = document.getElementById("header");
+
+    let headerAnim = null;
+    let currentTop = -215;
+    const targetShown = 0;
+    const targetHidden = -215;
+    const steps = [15, -10, 6, -4, 3, -2, 1, 0];
+
+    // подключим глобальные вещи
+    const buttons = {
+      'btn-converters': 'popup-converters',
+      'btn-editors': 'popup-editors',
+      'btn-tools': 'popup-tools'
+    };
+
+    const popups = {
+      'popup-converters': document.getElementById('popup-converters'),
+      'popup-editors': document.getElementById('popup-editors'),
+      'popup-tools': document.getElementById('popup-tools')
+    };
+
+    const buttonElems = {
+      'btn-converters': document.getElementById('btn-converters'),
+      'btn-editors': document.getElementById('btn-editors'),
+      'btn-tools': document.getElementById('btn-tools')
+    };
+
+    // текущая активная кнопка
+    let currentActive = null;
+
+    function hideAllPopups() {
+      Object.keys(buttons).forEach(btnId => {
+        const popupId = buttons[btnId];
+        const popup = popups[popupId];
+        const button = buttonElems[btnId];
+
+        // Прячем попап
+        popup.style.top = "-700px";
+        popup.style.opacity = "0";
+        popup.style.visibility = "hidden";
+
+        // Убираем визуальную активность
+        button.classList.remove('hover-active');
+      });
+
+      currentActive = null;
+    }
+
+    function animateHeader(to) {
+      clearInterval(headerAnim);
+      let step = 0;
+
+      headerAnim = setInterval(() => {
+        const jerk = steps[step] || 0;
+        const diff = (to - currentTop) * 0.3 + jerk;
+        currentTop += diff;
+        header.style.top = `${currentTop}px`;
+
+        if (Math.abs(to - currentTop) < 1 || step >= steps.length) {
+          clearInterval(headerAnim);
+          currentTop = to;
+          header.style.top = `${to}px`;
+
+          // если хидер уехал вверх — прячем всё
+          if (to === targetHidden) {
+            hideAllPopups();
+          }
+        }
+
+        step++;
+      }, 30);
+    }
+
+    header.addEventListener("mouseenter", () => {
+      animateHeader(targetShown);
+    });
+
+    header.addEventListener("mouseleave", () => {
+      animateHeader(targetHidden);
+    });
+  });
+</script>
+
+<div class="info-block-display" style="
+top: 800px;
+">
+  <div class="rectangle-37"></div>
+  <div class="rectangle-34"></div>
+  <img class="scratches-on-plastic" src="scratches-on-plastic0.png" />
+  <div class="display">
+    <div class="rectangle-36"></div>
+    <div class="rectangle-362"></div>
+    <div class="text-aria">
+      <div
+        id='textblock' class="what-is-the-switzertool-sys-switzer-tool-is-massive-web-multi-tool-that-was-created-to-make-any-computer-user-web-user-live-easier-it-combines-majority-of-tools-that-regular-user-will-need-and-tools-that-will-be-such-an-air-breath-for-advanced-users"
+      >
+        
+      </div>
+      <div class="btns">
+        <div class="group-27" id="about">
+          <div class="rectangle-40"></div>
+          <div class="about">/about</div>
+        </div>
+        <div class="group-29" id="help">
+          <div class="rectangle-402"></div>
+          <div class="help">/Help</div>
+        </div>
+        <div class="group-30" id="why">
+          <div class="rectangle-403"></div>
+          <div class="why">/why</div>
+        </div>
+        <div class="group-31" id="security">
+          <div class="rectangle-404"></div>
+          <div class="security">/security</div>
+        </div>
+        <div class="group-32" id="story">
+          <div class="rectangle-405"></div>
+          <div class="story">/story</div>
+        </div>
+        <div class="group-33" id="funcs">
+          <div class="rectangle-406"></div>
+          <div class="funcs">/funcs</div>
+        </div>
+      </div>
+    </div>
+    <img class="screen-filter" src="screen-filter0.png" style="pointer-events: none;"/>
+  </div>
+  <div class="btn"></div>
+  <img class="power" src="Power.svg" />
+  <div class="switzertool-v-0-1">SWITZERTOOL V 0.1</div>
+</div>
+<script>
+
+let textblock;
+let index = 0;
+let currentText = "";
+let typingSpeed = 15; // стандартная скорость
+let currentColor = "#28d93c"; // стандартный цвет текста
+let typingTimeout = null; // хранение id таймера
+
+function typeText(newText) {
+    if (typingTimeout) {
+    clearTimeout(typingTimeout); // ОЧИЩАЕМ старый таймер
+    typingTimeout = null;
+  }
+  textblock.innerHTML = "";
+  index = 0;
+  currentText = newText;
+  typingSpeed = 15;
+  currentColor = "#28d93c"; // стандартный цвет текста
+
+  function step() {
+    if (index < currentText.length) {
+      if (currentText.substring(index, index + 2) === "{{") {
+        // нашли {{
+        const end = currentText.indexOf("}}", index);
+        if (end !== -1) {
+          const command = currentText.substring(index + 2, end).trim();
+          
+          if (command.startsWith("typing speed:")) {
+            const speed = parseInt(command.split(":")[1]);
+            if (!isNaN(speed)) typingSpeed = speed;
+          } else if (/^#[0-9A-Fa-f]{6}$/.test(command)) {
+            currentColor = command;
+          }
+          
+          index = end + 2; // пропускаем всё до }}
+          setTimeout(step, typingSpeed);
+          return;
+        }
+      }
+
+      if (currentText.charAt(index) === "\n") {
+        textblock.innerHTML += "<br>";
+      } else {
+        textblock.innerHTML += `<span style="color:${currentColor};">${currentText.charAt(index)}</span>`;
+      }
+
+      index++;
+            typingTimeout = setTimeout(step, typingSpeed); // сохраняем таймер в переменную
+    }
+  }
+
+  step();
+}
+
+  document.addEventListener("DOMContentLoaded", () => {
+    textblock = document.getElementById('textblock');
+
+    const introText = "sys> press any button for more info";
+    const aboutText = "sys> SwitzerTool is a massive web multi-tool that was created to make any computer user, web user live easier. It combines majority of tools that regular user will need and tools that will be such an air-breath for advanced users.";
+    const helpText = "sys> To start using SwitzerTool, simply open Control board on Top by hover on yellow-black stripe and choose desired category.";
+    const whyText = "sys> WHY??? SwitzerTool built and design for users to of all kinds to achive their goals. its a regular converter that built to drain money from user's pocket. SWITZERTOOL is more than just a converter, it is a tool that combinmes utilities and editors, it's a real swiss knife for web users.";
+    const securityText = "sys> Security is our top priority. SwitzerTool does not store any user data or files. All operations are performed locally in your browser, ensuring your privacy and security. Only You have access to your files and data, and we do not track or log any user activity. You are the one who responcible for your data.";
+    const funcsText = 'sys> SwitzerTool offers\n1: converting services from file to file\n2: editing services for images, audio, video and documents\n3: utilities for web users like QR code generator, text to speech and more\n4: and many more features are {{typing speed:90}} coming soon!';
+    typeText(introText);
+
+    document.getElementById("about").addEventListener("click", () => {
+      typeText(aboutText);
+    });
+    document.getElementById("help").addEventListener("click", () => {
+      typeText(helpText);
+    });
+    document.getElementById("why").addEventListener("click", () => {
+      typeText(whyText);
+    });
+    document.getElementById("security").addEventListener("click", () => {
+      typeText(securityText);
+    }); 
+    document.getElementById("funcs").addEventListener("click", () => {
+      typeText("sys> SwitzerTool offers\n{{typing speed:70}}sys>{{typing speed: 15}} converting services from file to file\n{{typing speed:70}}sys>{{typing speed: 15}} editing services for images, audio, video and documents\n{{typing speed:70}}sys>{{typing speed: 15}} utilities for web users like QR code generator, text to speech and more\n{{typing speed:70}}sys>{{typing speed: 15}} and many more features are {{ #ffffff }}{{typing speed:100}} coming soon!");
+    });
+    document.getElementById("story").addEventListener("click", () => {
+      typeText("sys> The story of SwitzerTool began with a simple idea: to create a tool that would make life easier for both regular and advanced users. Inspired by the Swiss Army Knife, we wanted to combine multiple utilities and editors into one platform. After months of development and testing, we are proud to present SwitzerTool, a powerful web multi-tool designed to meet the needs of all users.");
+    });
+    // можно добавить еще кнопки, например:
+    // document.getElementById("why").addEventListener("click", () => typeText("sys> Because it's awesome, bro."));
+  });
+</script>
+
+</div>
+</div>
+    
+    
+    
+  
+  
+  
+</body>
+</html>

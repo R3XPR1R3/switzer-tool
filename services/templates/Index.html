@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tax Calculator Hub</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 900px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #f4f4f4;
+    }
+    select, input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+    }
+    .section {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+    .dependent {
+      background: #ffffff;
+      padding: 10px;
+      border: 1px solid #ccc;
+      margin-bottom: 10px;
+      border-radius: 5px;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      background: white;
+      border-radius: 5px;
+    }
+    .success { color: green; }
+    .fail { color: red; }
+  </style>
+</head>
+<body>
+  <h2>Tax Calculator</h2>
+  <label for="modeSelector">Choose Mode:</label>
+  <select id="modeSelector" onchange="switchMode(this.value)">
+    <option value="safeharbor">Safe Harbor Calculator</option>
+    <option value="refund">Refund Estimator</option>
+  </select>
+
+  <div id="safeHarborSection" class="section">
+    <h3>Safe Harbor Tax Calculator</h3>
+    <label>Amount already withheld/paid this year:
+      <input type="number" id="paidSoFar" placeholder="e.g., 3000" />
+    </label>
+    <h4>Last Year</h4>
+    <label>Tax liability from last year:
+      <input type="number" id="lastYearTax" placeholder="e.g., 4500" />
+    </label>
+    <h4>This Year</h4>
+    <label>Estimated total tax for this year:
+      <input type="number" id="currentYearTax" placeholder="e.g., 5000" />
+    </label>
+    <button onclick="calculateSafeHarbor()">Calculate</button>
+    <div class="result" id="safeHarborResult"></div>
+  </div>
+
+  <div id="refundSection" class="section" style="display:none">
+    <h3>2024 Tax Refund Estimator</h3>
+    <label>Filing Status:
+      <select id="status">
+        <option value="single">Single</option>
+        <option value="married">Married Filing Jointly</option>
+        <option value="separate">Married Filing Separately</option>
+        <option value="head">Head of Household</option>
+      </select>
+    </label>
+    <label>Total Income:
+      <input type="number" id="income" placeholder="e.g. 60000">
+    </label>
+
+    <label>Total AGI:
+      <input type="number" id="agiincome" placeholder="e.g. 50000">
+    </label>
+
+    <label>Desired Refund Amount:
+      <input type="number" id="refund" placeholder="Optional">
+    </label>
+    <label>Educator (check if yes):
+      <input type="checkbox" id="educator">
+    </label>
+    <label>Number of Dependents:
+      <input type="number" id="depCount" value="0" min="0" onchange="renderDependents()">
+    </label>
+    <div id="dependents"></div>
+    <button onclick="calculateTax()">Calculate</button>
+    <div class="result" id="refundResult"></div>
+  </div>
+
+<script>
+    function switchMode(mode) {
+      document.getElementById('safeHarborSection').style.display = mode === 'safeharbor' ? 'block' : 'none';
+      document.getElementById('refundSection').style.display = mode === 'refund' ? 'block' : 'none';
+    }
+
+    function calculateSafeHarbor(bufferPercent = 0) {
+      const paid = parseFloat(document.getElementById('paidSoFar').value);
+      const lastYearTax = parseFloat(document.getElementById('lastYearTax').value);
+      const currentTax = parseFloat(document.getElementById('currentYearTax').value);
+      const bufferMultiplier = 1 + (bufferPercent / 100);
+      const resultDiv = document.getElementById('safeHarborResult');
+
+      if ([paid, lastYearTax, currentTax].some(isNaN)) {
+        resultDiv.innerHTML = `<p class='fail'>Please fill in all fields.</p>`;
+        return;
+      }
+
+      const required90 = currentTax * 0.90;
+      const required100 = lastYearTax;
+      let html = "<h4>Result:</h4>";
+
+      if (paid >= required90) {
+        html += `<p class="success">✅ You qualify under the 90% current year rule ($${required90.toFixed(2)}). No penalty.</p>`;
+        resultDiv.innerHTML = html;
+        return;
+      }
+
+      if (paid >= required100) {
+        html += `<p class="success">✅ You qualify under the 100% prior year rule ($${required100.toFixed(2)}). No penalty.</p>`;
+        resultDiv.innerHTML = html;
+        return;
+      }
+
+      const minRequired = Math.min(required90, required100);
+      const stillOwe = (minRequired - paid) * bufferMultiplier;
+      const perQuarter = stillOwe / 4;
+      const perMonth = stillOwe / 12;
+      const biWeekly = stillOwe / 26;
+      const weekly = stillOwe / 52;
+
+      html += `<p class="fail">❌ You do not meet either Safe Harbor requirement.</p>`;
+      html += `<p>You need to pay at least $${(minRequired - paid).toFixed(2)} to avoid a penalty.</p>`;
+      html += `<p><strong>With buffer applied (${bufferPercent}%):</strong></p>
+        <ul>
+          <li>Per quarter: $${perQuarter.toFixed(2)}</li>
+          <li>Per month: $${perMonth.toFixed(2)}</li>
+          <li>Bi-weekly: $${biWeekly.toFixed(2)}</li>
+          <li>Weekly: $${weekly.toFixed(2)}</li>
+        </ul>`;
+      html += `<label>Optional buffer %: <input type="number" id="bufferInput" value="${bufferPercent}" oninput="applyBuffer()"></label>`;
+      resultDiv.innerHTML = html;
+    }
+
+    function applyBuffer() {
+      const bufferVal = parseFloat(document.getElementById('bufferInput').value) || 0;
+      calculateSafeHarbor(bufferVal);
+    }
+
+    const brackets = {
+      single: [[0, 11600, 0.10], [11601, 47150, 0.12], [47151, 100525, 0.22], [100526, 191950, 0.24], [191951, 243725, 0.32], [243726, 609350, 0.35], [609351, Infinity, 0.37]],
+      married: [[0, 23200, 0.10], [23201, 94300, 0.12], [94301, 201050, 0.22], [201051, 383900, 0.24], [383901, 487450, 0.32], [487451, 731200, 0.35], [731201, Infinity, 0.37]],
+      separate: [[0, 11600, 0.10], [11601, 47150, 0.12], [47151, 100525, 0.22], [100526, 191950, 0.24], [191951, 243725, 0.32], [243726, 365600, 0.35], [365601, Infinity, 0.37]],
+      head: [[0, 16550, 0.10], [16551, 63100, 0.12], [63101, 100500, 0.22], [100501, 191950, 0.24], [191951, 243700, 0.32], [243701, 609350, 0.35], [609351, Infinity, 0.37]]
+    };
+
+    function renderDependents() {
+      const count = parseInt(document.getElementById('depCount').value);
+      const container = document.getElementById('dependents');
+      container.innerHTML = '';
+      for (let i = 0; i < count; i++) {
+        container.innerHTML += `
+          <div class="dependent">
+            <label>Dependent ${i + 1} Type:
+              <select class="dep-type">
+                <option value="child">Child</option>
+                <option value="other">Other</option>
+              </select>
+            </label>
+            <label>Age:
+              <input type="number" class="dep-age" />
+            </label>
+          </div>`
+        ;
+      }
+    }
+
+function calculateEIC(income, status, numChildren) {
+  const filing = status === 'married' ? 'married' : 'single';
+  const eicParams = {
+    0: { rate: 0.0765, max: 632, phaseInLimit: 7320, phaseOutStart: { single: 9210, married: 15290 }, phaseOutRate: 0.0765 },
+    1: { rate: 0.34, max: 4213, phaseInLimit: 11910, phaseOutStart: { single: 21560, married: 27640 }, phaseOutRate: 0.1598 },
+    2: { rate: 0.4, max: 6960, phaseInLimit: 16370, phaseOutStart: { single: 21560, married: 27640 }, phaseOutRate: 0.2106 },
+    3: { rate: 0.45, max: 7830, phaseInLimit: 16370, phaseOutStart: { single: 21560, married: 27640 }, phaseOutRate: 0.2106 }
+  };
+
+  const data = eicParams[Math.min(numChildren, 3)];
+  const start = data.phaseOutStart[filing];
+
+  let credit = 0;
+
+  if (income <= data.phaseInLimit) {
+    credit = income * data.rate;
+  } else if (income <= start) {
+    credit = data.max;
+  } else {
+    const excess = income - start;
+    const reduction = excess * data.phaseOutRate;
+    credit = data.max - reduction;
+  }
+
+  return credit > 0 ? Math.floor(credit) : 0;
+}
+
+
+    function calculateTax() {
+      const status = document.getElementById('status').value;
+      const income = parseFloat(document.getElementById('income').value);
+      const refundTarget = parseFloat(document.getElementById('refund').value) || 0;
+      const educator = document.getElementById('educator').checked;
+      const ages = [...document.querySelectorAll('.dep-age')].map(i => parseInt(i.value));
+      const types = [...document.querySelectorAll('.dep-type')].map(i => i.value);
+      const resultDiv = document.getElementById('refundResult');
+      const rawAGI = parseFloat(document.getElementById('agiincome').value) || income;
+      const adjustedAGI = educator ? rawAGI - 300 : rawAGI;
+
+      const standardDeduction = {
+        single: 14600,
+        married: 29200,
+        separate: 14600,
+        head: 21900
+      };
+
+      const taxableIncome = Math.max(0, adjustedAGI - standardDeduction[status]);
+
+      if (isNaN(income)) {
+        resultDiv.innerHTML = 'Please enter income.';
+        return;
+      }
+
+      let tax = 0;
+      for (let [min, max, rate] of brackets[status]) {
+        if (taxableIncome > min) {
+          const taxed = Math.min(taxableIncome, max) - min;
+          tax += taxed * rate;
+        }
+      }
+
+      let nonRefundableCredits = 0;
+      let refundableCredits = 0;
+      let ctc = 0, actc = 0, cdcc = 0, qdtc = 0;
+      let qualifyingChildren = 0;
+      let childUnder13Count = 0;
+
+      for (let i = 0; i < types.length; i++) {
+        const type = types[i];
+        const age = ages[i];
+        if (type === 'child') {
+          if (age < 17) {
+            ctc += 2000;
+            qualifyingChildren++;
+          } else {
+            qdtc += 500;
+          }
+          if (age < 13) childUnder13Count++;
+        } else {
+          qdtc += 500;
+        }
+      }
+
+      // 👉 CDCC (up to $3,000 per child under 13, max $6,000, credit is 20%-35% based on AGI)
+      if (childUnder13Count > 0) {
+        const maxExpenses = Math.min(childUnder13Count * 3000, 6000);
+        let cdccRate = 0.35;
+
+        if (adjustedAGI > 43000) {
+          cdccRate = 0.20;
+        } else if (adjustedAGI > 15000) {
+          cdccRate = 0.35 - Math.floor((adjustedAGI - 15000) / 2000) * 0.01;
+          cdccRate = Math.max(cdccRate, 0.20);
+        }
+
+        cdcc = maxExpenses * cdccRate;
+      }
+
+      const phaseoutStart = status === 'married' ? 400000 : 200000;
+      if (income > phaseoutStart) {
+        const over = income - phaseoutStart;
+        const reduction = Math.floor(over / 1000) * 50;
+        ctc = Math.max(ctc - reduction, 0);
+      }
+
+      nonRefundableCredits += Math.min(ctc, tax) + cdcc;
+      const actcEligible = Math.max(ctc - tax, 0);
+      const earnedIncome = income;
+      const actcLimit = Math.max(0, (earnedIncome - 2500) * 0.15);
+      actc = Math.min(actcEligible, actcLimit, qualifyingChildren * 1600);
+      refundableCredits += actc + (educator ? 300 : 0);
+
+      const eic = calculateEIC(earnedIncome, status, qualifyingChildren);
+      refundableCredits += eic;
+
+      const finalTax = Math.max(tax - nonRefundableCredits, 0);
+      const totalToWithhold = finalTax + refundTarget + refundableCredits;
+
+      const perMonth = totalToWithhold / 12;
+      const perWeek = totalToWithhold / 52;
+      const biWeekly = totalToWithhold / 26;
+
+      
+      
+      resultDiv.innerHTML =`
+        <h3>Estimated Tax Before Credits: $${tax.toFixed(2)}</h3>
+        
+        <p><strong>Adjusted AGI:</strong> $${adjustedAGI.toLocaleString()}</p>
+
+        <p><strong>Standard Deduction:</strong> $${standardDeduction[status].toFixed(2)}</p>
+        <p><strong>Taxable Income:</strong> $${taxableIncome.toFixed(2)}</p>
+        </br>
+        <p>Credits:</p>
+        <ul>
+          <li>CTC: $${ctc.toFixed(2)} (non-refundable part: $${Math.min(ctc, tax).toFixed(2)})</li>
+          <li>ACTC: $${actc.toFixed(2)}</li>
+          <li>CDCC: $${cdcc.toFixed(2)}</li>
+          <li>QDTC: $${qdtc.toFixed(2)}</li>
+          <li>EIC: $${eic.toFixed(2)}</li>
+        </ul>
+        <p><strong>Tax After Non-Refundable Credits:</strong> $${finalTax.toFixed(2)}</p>
+        <p><strong>+ Desired Refund:</strong> $${refundTarget.toFixed(2)}</p>
+        <p><strong>+ Refundable Credits:</strong> $${refundableCredits.toFixed(2)}</p>
+        <p><strong>Total To Withhold:</strong> $${totalToWithhold.toFixed(2)}</p>
+        <hr/>
+        <p>Per Month: $${perMonth.toFixed(2)}</p>
+        <p>Bi-Weekly: $${biWeekly.toFixed(2)}</p>
+        <p>Weekly: $${perWeek.toFixed(2)}</p>
+      `;
+    } 
+</script>
+
+
+
+<div class="info-block-display">
+  <div class="rectangle-37"></div>
+  <div class="rectangle-34"></div>
+  <img class="scratches-on-plastic" src="scratches-on-plastic0.png" />
+  <div class="display">
+    <div class="rectangle-36"></div>
+    <div class="rectangle-362"></div>
+    <div class="text-aria">
+      <div
+        class="what-is-the-switzertool-sys-switzer-tool-is-massive-web-multi-tool-that-was-created-to-make-any-computer-user-web-user-live-easier-it-combines-majority-of-tools-that-regular-user-will-need-and-tools-that-will-be-such-an-air-breath-for-advanced-users"
+      >
+        <span>
+          <span
+            class="what-is-the-switzertool-sys-switzer-tool-is-massive-web-multi-tool-that-was-created-to-make-any-computer-user-web-user-live-easier-it-combines-majority-of-tools-that-regular-user-will-need-and-tools-that-will-be-such-an-air-breath-for-advanced-users-span"
+          >
+            what is the
+          </span>
+          <span
+            class="what-is-the-switzertool-sys-switzer-tool-is-massive-web-multi-tool-that-was-created-to-make-any-computer-user-web-user-live-easier-it-combines-majority-of-tools-that-regular-user-will-need-and-tools-that-will-be-such-an-air-breath-for-advanced-users-span2"
+          >
+            Switzertool
+          </span>
+          <span
+            class="what-is-the-switzertool-sys-switzer-tool-is-massive-web-multi-tool-that-was-created-to-make-any-computer-user-web-user-live-easier-it-combines-majority-of-tools-that-regular-user-will-need-and-tools-that-will-be-such-an-air-breath-for-advanced-users-span3"
+          >
+            ?
+            <br />
+          </span>
+          <span
+            class="what-is-the-switzertool-sys-switzer-tool-is-massive-web-multi-tool-that-was-created-to-make-any-computer-user-web-user-live-easier-it-combines-majority-of-tools-that-regular-user-will-need-and-tools-that-will-be-such-an-air-breath-for-advanced-users-span4"
+          >
+            <br />
+          </span>
+          <span
+            class="what-is-the-switzertool-sys-switzer-tool-is-massive-web-multi-tool-that-was-created-to-make-any-computer-user-web-user-live-easier-it-combines-majority-of-tools-that-regular-user-will-need-and-tools-that-will-be-such-an-air-breath-for-advanced-users-span5"
+          >
+            sys&gt;
+          </span>
+          <span
+            class="what-is-the-switzertool-sys-switzer-tool-is-massive-web-multi-tool-that-was-created-to-make-any-computer-user-web-user-live-easier-it-combines-majority-of-tools-that-regular-user-will-need-and-tools-that-will-be-such-an-air-breath-for-advanced-users-span6"
+          >
+            SwitzerTOOL
+          </span>
+          <span
+            class="what-is-the-switzertool-sys-switzer-tool-is-massive-web-multi-tool-that-was-created-to-make-any-computer-user-web-user-live-easier-it-combines-majority-of-tools-that-regular-user-will-need-and-tools-that-will-be-such-an-air-breath-for-advanced-users-span7"
+          >
+            IS MASSIVE WEB MULTI-TOOL, THAT WAS CREATED TO MAKE ANY COMPUTER
+            USER/WEB USER LIVE EASIER: IT COMBINES MAJORITY OF TOOLS THAT
+            REGULAR USER WILL NEED AND TOOLS THAT WILL BE SUCH AN AIR BREATH FOR
+            ADVANCED USERS.
+            <br />
+            <br />
+            <br />
+          </span>
+        </span>
+      </div>
+      <div class="btns">
+        <div class="group-27">
+          <div class="rectangle-40"></div>
+          <div class="about">/about</div>
+        </div>
+        <div class="group-29">
+          <div class="rectangle-402"></div>
+          <div class="help">/Help</div>
+        </div>
+        <div class="group-30">
+          <div class="rectangle-403"></div>
+          <div class="why">/why</div>
+        </div>
+        <div class="group-31">
+          <div class="rectangle-404"></div>
+          <div class="security">/security</div>
+        </div>
+        <div class="group-32">
+          <div class="rectangle-405"></div>
+          <div class="story">/story</div>
+        </div>
+        <div class="group-33">
+          <div class="rectangle-406"></div>
+          <div class="funcs">/funcs</div>
+        </div>
+      </div>
+      <div class="sys">sys&gt;_</div>
+    </div>
+    <img class="screen-filter" src="screen-filter0.png" />
+  </div>
+  <div class="btn"></div>
+  <img class="power" src="power0.svg" />
+  <div class="switzertool-v-0-1">SWITZERTOOL V 0.1</div>
+</div>
+
+
+</body>
+</html>
+
+huy
