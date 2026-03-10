@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Switzer Tool — Механический Конвертер</title>
+  <link rel="stylesheet" href="css/steampunk.css">
+  <!-- No external fonts — pure system monospace -->
+</head>
+<body>
+  <!-- Dust/particle background -->
+  <div class="dust-bg" id="dustBg"></div>
+
+  <!-- ============ HEADER — Machine descending on cables ============ -->
+  <header class="machine-header" id="machineHeader">
+    <div class="cable cable-left"></div>
+    <div class="cable cable-right"></div>
+    <div class="header-plate">
+      <div class="bolts top-bolts">
+        <span class="bolt"></span><span class="bolt"></span><span class="bolt"></span><span class="bolt"></span>
+      </div>
+      <div class="cog cog-left"><svg viewBox="0 0 100 100"><use href="#cogShape"/></svg></div>
+      <div class="cog cog-right"><svg viewBox="0 0 100 100"><use href="#cogShape"/></svg></div>
+      <h1 class="title">
+        <span class="flicker-letter">S</span>WITZER
+        <span class="title-sub">TOOL</span>
+      </h1>
+      <p class="tagline">Механический конвертер файлов — бесплатный, для работяг</p>
+      <div class="bolts bottom-bolts">
+        <span class="bolt"></span><span class="bolt"></span><span class="bolt"></span><span class="bolt"></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ MAIN CONVERTER ============ -->
+  <main class="workshop">
+    <!-- Mode switches — big chunky buttons like machine controls -->
+    <section class="control-panel">
+      <div class="panel-box">
+        <div class="bolts"><span class="bolt"></span><span class="bolt"></span></div>
+        <h2 class="section-label">Тип конвертации</h2>
+        <div class="switch-row">
+          <button class="mech-switch active" data-mode="image-format">
+            <span class="switch-knob"></span>
+            <span class="switch-label">Формат<br>изображ.</span>
+            <span class="indicator-lamp"></span>
+          </button>
+          <button class="mech-switch" data-mode="image-filter">
+            <span class="switch-knob"></span>
+            <span class="switch-label">Фильтры<br>WASM</span>
+            <span class="indicator-lamp"></span>
+          </button>
+          <button class="mech-switch" data-mode="text">
+            <span class="switch-knob"></span>
+            <span class="switch-label">Текст &amp;<br>Данные</span>
+            <span class="indicator-lamp"></span>
+          </button>
+          <button class="mech-switch" data-mode="encoding">
+            <span class="switch-knob"></span>
+            <span class="switch-label">Кодиров-<br>ка</span>
+            <span class="indicator-lamp"></span>
+          </button>
+        </div>
+        <div class="bolts"><span class="bolt"></span><span class="bolt"></span></div>
+      </div>
+    </section>
+
+    <!-- Settings per mode -->
+    <section class="settings-panel" id="settingsPanel">
+      <div class="panel-box">
+        <div class="dial-row" id="settingsContent"></div>
+      </div>
+    </section>
+
+    <!-- ============ THE MACHINE — Conveyor ============ -->
+    <section class="machine-section">
+      <div class="machine-frame">
+        <!-- Input hopper -->
+        <div class="hopper" id="dropZone">
+          <div class="hopper-inner">
+            <svg class="hopper-icon" viewBox="0 0 80 60" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5,5 Q5,2 8,2 L72,2 Q75,2 75,5 L65,55 Q64,58 61,58 L19,58 Q16,58 15,55 Z" opacity="0.15" fill="currentColor"/>
+              <path d="M5,5 Q5,2 8,2 L72,2 Q75,2 75,5 L65,55 Q64,58 61,58 L19,58 Q16,58 15,55 Z"/>
+              <line x1="20" y1="25" x2="60" y2="25" stroke-dasharray="4 4"/>
+              <line x1="25" y1="35" x2="55" y2="35" stroke-dasharray="4 4"/>
+            </svg>
+            <p class="hopper-text">Брось файл сюда<br><span class="small">или нажми чтобы выбрать</span></p>
+            <input type="file" id="fileInput" multiple hidden>
+          </div>
+        </div>
+
+        <!-- Conveyor belt -->
+        <div class="conveyor" id="conveyorBelt">
+          <div class="belt-rail">
+            <div class="belt-slats" id="beltSegments"></div>
+          </div>
+          <div class="sprocket sprocket-l"><svg viewBox="0 0 60 60"><use href="#sprocketShape"/></svg></div>
+          <div class="sprocket sprocket-r"><svg viewBox="0 0 60 60"><use href="#sprocketShape"/></svg></div>
+          <div class="belt-items" id="beltItems"></div>
+        </div>
+
+        <!-- Processing unit -->
+        <div class="processor" id="processingChamber">
+          <div class="processor-body">
+            <div class="pressure-dial">
+              <div class="dial-face">
+                <div class="dial-needle" id="gaugeNeedle"></div>
+              </div>
+              <span class="dial-text">давление</span>
+            </div>
+            <div class="pistons">
+              <div class="piston piston-1"></div>
+              <div class="piston piston-2"></div>
+            </div>
+            <div class="status-display" id="chamberStatus">ОЖИДАНИЕ</div>
+            <div class="exhaust" id="steamVent"></div>
+          </div>
+        </div>
+
+        <!-- Output tray -->
+        <div class="output-tray" id="outputChute">
+          <div class="tray-body">
+            <div class="tray-label" id="outputSlot"><p>Готовые файлы</p></div>
+            <div class="output-files" id="outputFiles"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Preview -->
+    <section class="preview-panel" id="previewPanel" style="display:none">
+      <div class="panel-box">
+        <h3 class="section-label">Просмотр</h3>
+        <div class="preview-content" id="previewContent"></div>
+        <canvas id="previewCanvas" style="display:none"></canvas>
+      </div>
+    </section>
+
+    <!-- Big button -->
+    <section class="action-bar">
+      <button class="big-btn" id="convertBtn" disabled>
+        <span class="big-btn-face">
+          <span class="btn-glow"></span>
+          <span class="btn-label">ЗАПУСТИТЬ МЕХАНИЗМ</span>
+        </span>
+      </button>
+    </section>
+  </main>
+
+  <!-- Footer pipes -->
+  <footer class="machine-footer">
+    <div class="pipe-decor pipe-l"></div>
+    <p>Switzer Tool v1.0 — Все конвертации в твоём браузере. Без серверов.</p>
+    <div class="pipe-decor pipe-r"></div>
+  </footer>
+
+  <!-- SVG defs -->
+  <svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <!-- Hand-drawn style cog -->
+      <symbol id="cogShape" viewBox="0 0 100 100">
+        <path d="M48,8 L53,18 Q58,14 63,16 L62,28 Q68,27 73,30 L67,39 Q72,42 75,47 L65,50 Q68,56 67,61 L57,58 Q57,64 54,68 L46,62 Q42,67 38,68 L37,58 Q31,61 27,58 L33,50 Q28,47 26,42 L36,39 Q32,34 32,29 L42,30 Q42,24 46,20 L44,10 Z"
+              fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linejoin="round"/>
+        <circle cx="50" cy="42" r="11" fill="none" stroke="currentColor" stroke-width="2.5"/>
+        <circle cx="50" cy="42" r="4" fill="currentColor"/>
+      </symbol>
+      <!-- Sprocket wheel -->
+      <symbol id="sprocketShape" viewBox="0 0 60 60">
+        <circle cx="30" cy="30" r="23" fill="none" stroke="currentColor" stroke-width="3"/>
+        <circle cx="30" cy="30" r="7" fill="currentColor" opacity="0.6"/>
+        <line x1="30" y1="7" x2="30" y2="53" stroke="currentColor" stroke-width="1.5" opacity="0.5"/>
+        <line x1="7" y1="30" x2="53" y2="30" stroke="currentColor" stroke-width="1.5" opacity="0.5"/>
+        <line x1="13" y1="13" x2="47" y2="47" stroke="currentColor" stroke-width="1.5" opacity="0.5"/>
+        <line x1="47" y1="13" x2="13" y2="47" stroke="currentColor" stroke-width="1.5" opacity="0.5"/>
+      </symbol>
+    </defs>
+  </svg>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

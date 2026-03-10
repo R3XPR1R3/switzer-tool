@@ -1,0 +1,1095 @@
+/* ============================================================
+   SWITZER TOOL — Industrial Machinery Converter
+   Dark, aggressive, lifeless factory aesthetic.
+   Cold metal, rust, grime, exposed pipes, warning stripes.
+   Brutal. No life. Only the machine.
+   ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --metal: #2e2e2e;
+  --metal-light: #444;
+  --metal-dark: #181818;
+  --metal-edge: #555;
+  --rust: #6b3a1f;
+  --rust-bright: #8b4513;
+  --rust-stain: #4a2810;
+  --grime: #1a1610;
+  --warning-yellow: #c9a800;
+  --warning-stripe: repeating-linear-gradient(
+    -45deg,
+    var(--warning-yellow) 0px, var(--warning-yellow) 10px,
+    var(--metal-dark) 10px, var(--metal-dark) 20px
+  );
+  --led-off: #1a1a1a;
+  --led-green: #1aff1a;
+  --led-red: #ff2020;
+  --led-amber: #ff8800;
+  --spark: #ffa040;
+  --pipe: #353535;
+  --weld: #4a4030;
+  --bg: #0e0e0c;
+  --bg-panel: #1a1a18;
+  --text: #8a8880;
+  --text-bright: #b0ada5;
+  --text-dim: #555550;
+  --font-display: 'Courier New', 'Courier', monospace;
+  --font-body: 'Courier New', 'Courier', monospace;
+  --font-label: 'Courier New', 'Courier', monospace;
+}
+
+html { font-size: 16px; scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  /* Gritty texture overlay */
+  background-image:
+    radial-gradient(ellipse at 30% 20%, rgba(107,58,31,0.04) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 80%, rgba(30,30,28,0.8) 0%, transparent 50%),
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+}
+
+/* ============================================================
+   DUST / PARTICLE BACKGROUND — Slow falling ash
+   ============================================================ */
+.dust-bg {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.dust-particle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: rgba(120,115,100,0.3);
+  border-radius: 50%;
+  animation: ashFall linear infinite;
+}
+
+@keyframes ashFall {
+  0% { transform: translateY(-10px) translateX(0); opacity: 0; }
+  10% { opacity: 0.5; }
+  90% { opacity: 0.15; }
+  100% { transform: translateY(100vh) translateX(30px); opacity: 0; }
+}
+
+/* ============================================================
+   HEADER — Heavy metal plate descending on steel cables
+   ============================================================ */
+.machine-header {
+  position: relative;
+  z-index: 10;
+  animation: plateSlam 1.2s cubic-bezier(0.22, 0.9, 0.36, 1) forwards;
+  transform: translateY(-130%);
+}
+
+@keyframes plateSlam {
+  0% { transform: translateY(-130%); }
+  70% { transform: translateY(4px); }
+  85% { transform: translateY(-2px); }
+  100% { transform: translateY(0); }
+}
+
+.cable {
+  position: absolute;
+  top: -80px;
+  width: 6px;
+  height: 100px;
+  background: repeating-linear-gradient(
+    180deg,
+    #3a3a3a 0px, #555 2px, #3a3a3a 4px
+  );
+  z-index: 11;
+  border-radius: 3px;
+  animation: cableExtend 1.2s ease-out forwards;
+}
+.cable-left { left: 12%; }
+.cable-right { right: 12%; }
+
+@keyframes cableExtend {
+  0% { height: 0; }
+  100% { height: 100px; }
+}
+
+.header-plate {
+  position: relative;
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 28px 40px 22px;
+  background:
+    linear-gradient(170deg, var(--metal) 0%, var(--metal-dark) 40%, #222 100%);
+  border: 3px solid #333;
+  border-top: 5px solid var(--metal-edge);
+  border-bottom: 4px solid #111;
+  text-align: center;
+  box-shadow:
+    0 10px 40px rgba(0,0,0,0.8),
+    0 2px 0 #444 inset,
+    0 -2px 4px rgba(0,0,0,0.5) inset;
+  /* Scratched metal effect */
+  background-image:
+    repeating-linear-gradient(90deg, transparent 0px, transparent 3px, rgba(255,255,255,0.008) 3px, rgba(255,255,255,0.008) 4px);
+}
+
+/* --- Bolts (not rivets — raw hex bolts) --- */
+.bolts {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 8px;
+  margin-bottom: 8px;
+}
+.bottom-bolts { margin-bottom: 0; margin-top: 8px; }
+
+.bolt {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 40% 35%, #666 0%, #333 50%, #1a1a1a 100%);
+  border: 1px solid #222;
+  box-shadow:
+    0 1px 3px rgba(0,0,0,0.6),
+    inset 0 1px 1px rgba(255,255,255,0.08);
+  position: relative;
+}
+
+.bolt::after {
+  content: '';
+  position: absolute;
+  top: 3px; left: 3px;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, transparent 40%, rgba(0,0,0,0.3) 100%);
+}
+
+/* --- Cogs (gears, slowly grinding) --- */
+.cog {
+  position: absolute;
+  top: 12px;
+  width: 50px;
+  height: 50px;
+  color: #3a3a3a;
+  opacity: 0.5;
+}
+.cog-left {
+  left: 12px;
+  animation: grind 12s linear infinite;
+}
+.cog-right {
+  right: 12px;
+  animation: grind 12s linear infinite reverse;
+}
+
+@keyframes grind {
+  to { transform: rotate(360deg); }
+}
+
+.cog svg { width: 100%; height: 100%; }
+
+/* --- Title --- */
+.title {
+  font-family: var(--font-display);
+  font-size: 2.8rem;
+  font-weight: 700;
+  color: var(--text-bright);
+  text-shadow:
+    0 0 30px rgba(255,136,0,0.08),
+    0 3px 6px rgba(0,0,0,0.7);
+  letter-spacing: 0.25em;
+  margin: 8px 0 4px;
+  text-transform: uppercase;
+}
+
+.title-sub {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 400;
+  color: var(--text-dim);
+  letter-spacing: 0.8em;
+  margin-top: 2px;
+}
+
+/* Flickering letter — broken factory light effect */
+.flicker-letter {
+  display: inline-block;
+  animation: brokenLight 4s ease-in-out infinite;
+}
+
+@keyframes brokenLight {
+  0%, 100% { opacity: 1; color: var(--led-amber); text-shadow: 0 0 15px rgba(255,136,0,0.4); }
+  3% { opacity: 0.1; color: var(--text-bright); text-shadow: none; }
+  5% { opacity: 1; color: var(--led-amber); text-shadow: 0 0 15px rgba(255,136,0,0.4); }
+  7% { opacity: 0.2; text-shadow: none; }
+  9% { opacity: 1; }
+  48% { opacity: 1; }
+  50% { opacity: 0.15; color: var(--text-bright); text-shadow: none; }
+  51% { opacity: 0.8; color: var(--led-amber); text-shadow: 0 0 20px rgba(255,136,0,0.5); }
+  53% { opacity: 1; }
+}
+
+.tagline {
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  margin-top: 6px;
+  letter-spacing: 0.05em;
+}
+
+/* ============================================================
+   WORKSHOP — Main area
+   ============================================================ */
+.workshop {
+  position: relative;
+  z-index: 5;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 25px 16px;
+}
+
+/* --- Panel box (generic container) --- */
+.panel-box {
+  background:
+    linear-gradient(175deg, var(--bg-panel) 0%, #141412 100%);
+  border: 2px solid #2a2a28;
+  padding: 18px;
+  position: relative;
+  box-shadow:
+    0 4px 20px rgba(0,0,0,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.02);
+  /* Rough edges via clip path */
+}
+
+.panel-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--warning-stripe);
+  opacity: 0.3;
+}
+
+.panel-box::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(107,58,31,0.3), transparent);
+}
+
+.section-label {
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  margin-bottom: 14px;
+  text-align: center;
+  position: relative;
+}
+
+.section-label::after {
+  content: '';
+  display: block;
+  width: 40px;
+  height: 1px;
+  background: var(--rust);
+  margin: 6px auto 0;
+}
+
+/* ============================================================
+   CONTROL PANEL — Mode switches (heavy industrial toggle)
+   ============================================================ */
+.control-panel {
+  margin-bottom: 18px;
+}
+
+.switch-row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.mech-switch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  background:
+    linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%);
+  border: 2px solid #333;
+  padding: 10px 14px 8px;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  min-width: 90px;
+  font-family: inherit;
+  color: inherit;
+  position: relative;
+}
+
+.mech-switch::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+}
+
+.mech-switch:hover {
+  border-color: var(--metal-edge);
+  box-shadow: 0 0 12px rgba(100,100,90,0.1);
+}
+
+.mech-switch.active {
+  border-color: var(--rust-bright);
+  background: linear-gradient(180deg, #333 0%, #222 100%);
+  box-shadow: 0 0 20px rgba(139,69,19,0.15);
+}
+
+.switch-knob {
+  display: block;
+  width: 10px;
+  height: 26px;
+  background: linear-gradient(90deg, #222, #555, #222);
+  border-radius: 3px;
+  transition: transform 0.3s cubic-bezier(0.34, 1.5, 0.64, 1),
+              background 0.3s;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.6);
+}
+
+.mech-switch.active .switch-knob {
+  transform: translateY(-8px);
+  background: linear-gradient(90deg, #444, #777, #444);
+}
+
+.switch-label {
+  font-size: 0.55rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  text-align: center;
+  line-height: 1.4;
+  color: var(--text-dim);
+}
+
+.mech-switch.active .switch-label {
+  color: var(--text-bright);
+}
+
+.indicator-lamp {
+  display: block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--led-off);
+  border: 1px solid #111;
+  transition: all 0.3s;
+}
+
+.mech-switch.active .indicator-lamp {
+  background: var(--led-amber);
+  box-shadow:
+    0 0 6px var(--led-amber),
+    0 0 15px rgba(255,136,0,0.25);
+  animation: lampFlicker 3s ease-in-out infinite;
+}
+
+@keyframes lampFlicker {
+  0%, 100% { opacity: 1; }
+  25% { opacity: 0.75; }
+  50% { opacity: 1; box-shadow: 0 0 8px var(--led-amber), 0 0 20px rgba(255,136,0,0.3); }
+  75% { opacity: 0.85; }
+}
+
+/* ============================================================
+   SETTINGS PANEL
+   ============================================================ */
+.settings-panel {
+  margin-bottom: 18px;
+}
+
+.dial-row {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.dial-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.dial-label {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  letter-spacing: 0.08em;
+}
+
+/* Industrial select */
+.mech-select {
+  appearance: none;
+  background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%);
+  border: 2px solid #333;
+  color: var(--text-bright);
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  padding: 8px 28px 8px 10px;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1,1 L6,6 L11,1' stroke='%23888' fill='none' stroke-width='2'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+}
+
+.mech-select:hover { border-color: var(--metal-edge); }
+.mech-select:focus { outline: none; border-color: var(--rust-bright); box-shadow: 0 0 8px rgba(139,69,19,0.2); }
+
+.mech-select option {
+  background: #1a1a1a;
+  color: var(--text);
+}
+
+/* Industrial range */
+.mech-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 120px;
+  height: 6px;
+  background: linear-gradient(90deg, #1a1a1a, #333);
+  border: 1px solid #2a2a2a;
+  outline: none;
+}
+
+.mech-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 22px;
+  background: linear-gradient(180deg, #666, #333);
+  border: 2px solid #555;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+}
+
+.mech-range::-moz-range-thumb {
+  width: 16px;
+  height: 22px;
+  background: linear-gradient(180deg, #666, #333);
+  border: 2px solid #555;
+  cursor: pointer;
+}
+
+.range-value {
+  font-size: 0.65rem;
+  color: var(--led-amber);
+  font-family: var(--font-body);
+  min-width: 30px;
+  text-align: center;
+}
+
+/* ============================================================
+   THE MACHINE — Conveyor belt, processor, output
+   ============================================================ */
+.machine-section {
+  margin-bottom: 20px;
+}
+
+.machine-frame {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+/* --- Input hopper --- */
+.hopper {
+  width: 100%;
+  max-width: 420px;
+  cursor: pointer;
+}
+
+.hopper-inner {
+  border: 2px solid #2a2a28;
+  padding: 22px 20px;
+  text-align: center;
+  transition: all 0.3s;
+  background: var(--bg-panel);
+  position: relative;
+}
+
+.hopper-inner::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--warning-stripe);
+  opacity: 0.4;
+}
+
+.hopper-inner:hover,
+.hopper.drag-over .hopper-inner {
+  border-color: var(--rust-bright);
+  box-shadow: 0 0 25px rgba(139,69,19,0.1);
+}
+
+.hopper-icon {
+  width: 60px;
+  height: auto;
+  margin: 0 auto 8px;
+  display: block;
+  color: var(--text-dim);
+}
+
+.hopper-text {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
+.hopper-text .small {
+  font-size: 0.6rem;
+  opacity: 0.5;
+}
+
+/* --- Conveyor belt --- */
+.conveyor {
+  width: 100%;
+  height: 55px;
+  position: relative;
+  margin: 8px 0;
+}
+
+.belt-rail {
+  position: absolute;
+  top: 13px;
+  left: 28px;
+  right: 28px;
+  height: 28px;
+  background: #111;
+  border: 2px solid #2a2a2a;
+  overflow: hidden;
+}
+
+.belt-slats {
+  display: flex;
+  height: 100%;
+  animation: beltScroll 1.5s linear infinite paused;
+}
+
+.belt-slat {
+  min-width: 28px;
+  height: 100%;
+  border-right: 1px solid rgba(60,60,55,0.5);
+  background:
+    linear-gradient(180deg, #1a1a18 0%, #111 50%, #1a1a18 100%);
+}
+
+.conveyor.running .belt-slats {
+  animation-play-state: running;
+}
+
+@keyframes beltScroll {
+  to { transform: translateX(-29px); }
+}
+
+.sprocket {
+  position: absolute;
+  top: 3px;
+  width: 48px;
+  height: 48px;
+  color: #3a3a3a;
+}
+.sprocket-l { left: 0; }
+.sprocket-r { right: 0; }
+
+.conveyor.running .sprocket svg {
+  animation: grind 0.8s linear infinite;
+}
+
+.sprocket svg { width: 100%; height: 100%; }
+
+/* File items on belt */
+.belt-items {
+  position: absolute;
+  top: 0;
+  left: 28px;
+  right: 28px;
+  height: 100%;
+  pointer-events: none;
+}
+
+.belt-item {
+  position: absolute;
+  top: 6px;
+  width: 42px;
+  height: 42px;
+  background: linear-gradient(135deg, #3a3a3a, #2a2a2a);
+  border: 2px solid #555;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.45rem;
+  font-weight: 700;
+  color: var(--text-bright);
+  text-transform: uppercase;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  transition: left 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* --- Processing unit --- */
+.processor {
+  width: 210px;
+  margin: 4px auto;
+}
+
+.processor-body {
+  background: linear-gradient(180deg, #252525 0%, #161616 100%);
+  border: 3px solid #333;
+  padding: 14px;
+  position: relative;
+  text-align: center;
+  box-shadow:
+    0 5px 20px rgba(0,0,0,0.6),
+    inset 0 1px 0 rgba(255,255,255,0.03);
+}
+
+.processor-body::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--warning-stripe);
+  opacity: 0.25;
+}
+
+.pressure-dial {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.dial-face {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid #444;
+  background: radial-gradient(circle, #0a0a0a 0%, #181818 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.dial-face::after {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  border: 1px solid rgba(100,100,90,0.15);
+}
+
+.dial-needle {
+  position: absolute;
+  width: 2px;
+  height: 18px;
+  background: var(--led-red);
+  left: 50%;
+  bottom: 50%;
+  transform-origin: bottom center;
+  transform: translateX(-50%) rotate(-45deg);
+  transition: transform 0.5s cubic-bezier(0.34, 1.2, 0.64, 1);
+  box-shadow: 0 0 6px rgba(255,32,32,0.4);
+}
+
+.dial-text {
+  font-size: 0.4rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-top: 3px;
+}
+
+.pistons {
+  display: flex;
+  justify-content: space-between;
+  margin: 4px 20px;
+}
+
+.piston {
+  width: 12px;
+  height: 28px;
+  background: linear-gradient(90deg, #1a1a1a, #444, #1a1a1a);
+  border: 1px solid #333;
+}
+
+.processor.active .piston-1 {
+  animation: pump 0.35s ease-in-out infinite;
+}
+.processor.active .piston-2 {
+  animation: pump 0.35s ease-in-out infinite 0.18s;
+}
+
+@keyframes pump {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.status-display {
+  font-family: var(--font-display);
+  font-size: 0.55rem;
+  font-weight: 700;
+  color: var(--text-dim);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-top: 5px;
+  padding: 3px 8px;
+  background: #0a0a0a;
+  border: 1px solid #222;
+  display: inline-block;
+}
+
+.processor.active .status-display {
+  color: var(--led-amber);
+  border-color: rgba(255,136,0,0.2);
+  animation: statusBlink 0.8s ease-in-out infinite;
+}
+
+@keyframes statusBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.exhaust {
+  position: absolute;
+  top: -18px;
+  right: -8px;
+  width: 30px;
+  height: 18px;
+  pointer-events: none;
+}
+
+.steam-puff {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: radial-gradient(circle, rgba(100,100,90,0.35), transparent);
+  border-radius: 50%;
+  animation: exhale 0.7s ease-out forwards;
+}
+
+@keyframes exhale {
+  0% { transform: translate(0, 0) scale(0.4); opacity: 0.5; }
+  100% { transform: translate(12px, -22px) scale(2.5); opacity: 0; }
+}
+
+/* --- Output tray --- */
+.output-tray {
+  width: 100%;
+  max-width: 520px;
+  margin: 4px auto 0;
+}
+
+.tray-body {
+  background: var(--bg-panel);
+  border: 2px solid #2a2a28;
+  padding: 14px;
+  min-height: 55px;
+  position: relative;
+}
+
+.tray-body::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(107,58,31,0.2), transparent);
+}
+
+.tray-label {
+  text-align: center;
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.output-files {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+  justify-content: center;
+}
+
+.output-file {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%);
+  border: 1px solid #333;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+  color: var(--text);
+  font-size: 0.65rem;
+  animation: emergeUp 0.4s ease-out;
+}
+
+.output-file:hover {
+  border-color: var(--led-amber);
+  box-shadow: 0 0 10px rgba(255,136,0,0.1);
+  color: var(--text-bright);
+}
+
+.output-file .file-icon {
+  width: 16px;
+  height: 16px;
+  background: #444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.4rem;
+  color: var(--text-bright);
+  font-weight: 700;
+}
+
+@keyframes emergeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   PREVIEW
+   ============================================================ */
+.preview-panel {
+  margin-bottom: 18px;
+}
+
+.preview-content {
+  max-height: 280px;
+  overflow: auto;
+  background: #0a0a0a;
+  border: 1px solid #222;
+  padding: 10px;
+}
+
+.preview-content img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  border: 1px solid #333;
+}
+
+.preview-content pre {
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  color: var(--text);
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* ============================================================
+   BIG CONVERT BUTTON — Heavy industrial press
+   ============================================================ */
+.action-bar {
+  text-align: center;
+  margin: 18px 0;
+}
+
+.big-btn {
+  position: relative;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-family: inherit;
+  color: inherit;
+}
+
+.big-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.big-btn-face {
+  display: block;
+  position: relative;
+  padding: 14px 48px;
+  background: linear-gradient(180deg, #333 0%, #1a1a1a 100%);
+  border: 3px solid #555;
+  box-shadow:
+    0 6px 0 #111,
+    0 8px 20px rgba(0,0,0,0.5);
+  transition: all 0.12s;
+  overflow: hidden;
+}
+
+.big-btn-face::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--warning-stripe);
+  opacity: 0.5;
+}
+
+.big-btn:not(:disabled):hover .big-btn-face {
+  background: linear-gradient(180deg, #3a3a3a 0%, #222 100%);
+  box-shadow:
+    0 4px 0 #111,
+    0 6px 15px rgba(0,0,0,0.5);
+  transform: translateY(2px);
+}
+
+.big-btn:not(:disabled):active .big-btn-face {
+  box-shadow:
+    0 1px 0 #111,
+    0 2px 6px rgba(0,0,0,0.5);
+  transform: translateY(5px);
+}
+
+.btn-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, rgba(255,136,0,0.08), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.big-btn:not(:disabled) .btn-glow {
+  animation: pressGlow 2.5s ease-in-out infinite;
+}
+
+@keyframes pressGlow {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 0.6; }
+}
+
+.btn-label {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--text-bright);
+  text-shadow: 0 0 12px rgba(255,136,0,0.15);
+  position: relative;
+  z-index: 1;
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.machine-footer {
+  position: relative;
+  text-align: center;
+  padding: 28px 20px;
+  margin-top: 35px;
+  border-top: 2px solid #1a1a18;
+  font-size: 0.6rem;
+  color: var(--text-dim);
+}
+
+.pipe-decor {
+  position: absolute;
+  top: -13px;
+  width: 100px;
+  height: 10px;
+  background: linear-gradient(180deg, #444, #222, #444);
+  border: 1px solid #333;
+  border-radius: 5px;
+}
+.pipe-l { left: 10%; }
+.pipe-r { right: 10%; }
+
+.pipe-decor::before,
+.pipe-decor::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  width: 16px;
+  height: 18px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #555, #222);
+  border: 1px solid #333;
+}
+.pipe-decor::before { left: -5px; }
+.pipe-decor::after { right: -5px; }
+
+/* ============================================================
+   FILE QUEUE
+   ============================================================ */
+.file-queue {
+  margin-top: 10px;
+}
+
+.queued-file {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 10px;
+  background: rgba(30,30,28,0.6);
+  border: 1px solid #2a2a28;
+  margin-bottom: 3px;
+  font-size: 0.65rem;
+  animation: emergeUp 0.3s ease-out;
+}
+
+.queued-file .file-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text);
+}
+
+.queued-file .file-size {
+  color: var(--text-dim);
+  font-size: 0.55rem;
+}
+
+.queued-file .remove-btn {
+  background: none;
+  border: 1px solid #333;
+  color: var(--led-red);
+  cursor: pointer;
+  padding: 1px 5px;
+  font-family: inherit;
+  font-size: 0.55rem;
+  transition: all 0.2s;
+}
+
+.queued-file .remove-btn:hover {
+  background: var(--led-red);
+  color: #000;
+  border-color: var(--led-red);
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 600px) {
+  .title { font-size: 2rem; letter-spacing: 0.15em; }
+  .header-plate { padding: 18px 12px 14px; margin: 0 8px; }
+  .mech-switch { min-width: 70px; padding: 8px 8px 6px; }
+  .switch-label { font-size: 0.48rem; }
+  .workshop { padding: 12px 8px; }
+  .big-btn-face { padding: 12px 28px; }
+  .btn-label { font-size: 0.7rem; letter-spacing: 0.15em; }
+  .sprocket { display: none; }
+  .belt-rail { left: 0; right: 0; }
+  .cog { display: none; }
+}
