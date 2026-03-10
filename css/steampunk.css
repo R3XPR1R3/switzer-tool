@@ -980,10 +980,13 @@ body {
 
 .terminal-screen {
   background: var(--dark-screen);
-  padding: 16px;
-  min-height: 150px;
+  padding: 20px;
+  min-height: 280px;
   position: relative;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .crt-filter {
@@ -996,14 +999,17 @@ body {
 }
 
 .terminal-output {
-  font-family: var(--font-pixel);
-  font-size: 0.6rem;
+  font-family: 'Silkscreen', monospace;
+  font-size: 14px;
   color: var(--green-neon);
-  line-height: 1.8;
+  line-height: 1.6;
   position: relative;
   z-index: 1;
   text-shadow: 0 0 6px rgba(40,217,60,0.3);
   white-space: pre-wrap;
+  max-height: 250px;
+  overflow-y: auto;
+  margin-bottom: 12px;
 }
 
 .terminal-cursor {
@@ -1018,27 +1024,31 @@ body {
 .terminal-buttons {
   display: flex;
   gap: 8px;
-  margin-top: 10px;
-  justify-content: center;
+  margin-top: 14px;
+  justify-content: flex-start;
   flex-wrap: wrap;
+  position: relative;
+  z-index: 2;
 }
 
 .term-btn {
   background: transparent;
-  border: 2px solid var(--green-neon);
-  color: var(--green-neon);
-  font-family: var(--font-pixel);
-  font-size: 0.5rem;
-  padding: 5px 14px;
+  border: 3px solid #28d93c;
+  color: #28d93c;
+  font-family: 'Silkscreen', monospace;
+  font-size: 13px;
+  padding: 8px 18px;
   cursor: pointer;
   transition: all 0.15s;
-  border-radius: 3px;
+  border-radius: 0;
+  box-shadow: 0 0 7px rgba(255,255,255,0.2);
+  text-transform: none;
 }
 
 .term-btn:hover {
-  background: var(--green-neon);
-  color: #000;
-  box-shadow: 0 0 10px rgba(40,217,60,0.3);
+  background: #28d93c;
+  color: #090909;
+  box-shadow: inset 0 0 7px rgba(255,255,255,0.39);
 }
 
 .terminal-label {
@@ -1048,6 +1058,20 @@ body {
   letter-spacing: 0.2em;
   text-align: center;
   margin-top: 8px;
+}
+
+/* ============================================================
+   SCRATCH / WEAR TEXTURE OVERLAY
+   ============================================================ */
+.scratch-overlay {
+  position: absolute;
+  inset: 0;
+  background: url('../assets/scratches-on-plastic.png') center/cover;
+  opacity: 0.09;
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: 1;
+  mix-blend-mode: multiply;
 }
 
 /* ============================================================
@@ -1113,16 +1137,74 @@ body {
 /* ============================================================
    RESPONSIVE
    ============================================================ */
+
+/* Tablet */
+@media (max-width: 768px) {
+  .workshop {
+    padding: 20px 12px;
+    padding-top: 55px;
+  }
+  .sign-title { font-size: 2.2rem; }
+  .sign-body { padding: 24px 20px; }
+  .nav-btn { min-width: 100px; padding: 8px 14px; }
+  .nav-btn-label { font-size: 0.85rem; }
+  .terminal-output { font-size: 12px; max-height: 200px; }
+  .term-btn { font-size: 11px; padding: 6px 12px; }
+}
+
+/* Mobile */
 @media (max-width: 600px) {
-  .sign-title { font-size: 1.8rem; }
-  .sign-body { padding: 20px 15px; }
-  .nav-btn { min-width: 80px; padding: 8px 10px; }
-  .nav-btn-label { font-size: 0.7rem; }
-  .workshop { padding: 15px 8px; padding-top: 50px; }
-  .big-btn-face { padding: 12px 30px; }
-  .btn-label { font-size: 0.85rem; letter-spacing: 0.15em; }
+  .workshop {
+    padding: 10px 6px;
+    padding-top: 45px;
+  }
+  .sign-title { font-size: 1.6rem; letter-spacing: 0.1em; }
+  .sign-subtitle { font-size: 0.7rem; }
+  .sign-body { padding: 16px 12px; }
+  .nav-buttons { flex-wrap: wrap; padding: 8px 6px 10px; }
+  .nav-btn { min-width: 70px; padding: 6px 8px; }
+  .nav-btn-label { font-size: 0.65rem; }
+  .nav-btn-sub { font-size: 0.35rem; }
+  .chrome-bar { padding: 5px 8px; }
+  .logo-img { width: 28px; height: 28px; }
+  .header-title { font-size: 1rem; }
+  .big-btn-face { padding: 10px 24px; }
+  .btn-label { font-size: 0.8rem; letter-spacing: 0.12em; }
   .sprocket { display: none; }
   .belt-rail { left: 0; right: 0; }
-  .chrome-bar { padding: 6px 10px; }
-  .terminal-screen { min-height: 100px; }
+  .conveyor { height: 40px; }
+  .belt-rail { height: 22px; top: 9px; }
+  .belt-item { width: 32px; height: 32px; top: 3px; font-size: 0.3rem; }
+  .processor { max-width: 200px; }
+  .processor-housing { padding: 10px; }
+  .display-screen { padding: 6px 10px; }
+  .display-text { font-size: 0.8rem; }
+  .gauge { width: 34px; height: 34px; }
+  .terminal-housing { padding: 10px; border-radius: 10px; }
+  .terminal-bezel { padding: 2px; }
+  .terminal-screen { padding: 12px; min-height: 220px; }
+  .terminal-output { font-size: 11px; max-height: 160px; line-height: 1.5; }
+  .term-btn { font-size: 10px; padding: 5px 10px; border-width: 2px; }
+  .terminal-buttons { gap: 5px; }
+  .instrument-body { padding: 10px; }
+  .instrument-screen { padding: 10px; }
+  .dial-label { font-size: 0.4rem; }
+  .mech-select { font-size: 0.6rem; padding: 5px 22px 5px 8px; }
+  .mech-range { width: 80px; }
+  .drop-inner { padding: 14px; }
+  .drop-icon { width: 30px; height: 30px; }
+  .drop-text { font-size: 0.7rem; }
+  .pull-tab { width: 160px; height: 28px; }
+  .pull-tab-text { font-size: 0.45rem; }
+  .machine-footer { font-size: 0.35rem; padding: 16px 10px; }
+}
+
+/* Very small screens */
+@media (max-width: 380px) {
+  .sign-title { font-size: 1.3rem; }
+  .nav-buttons { gap: 0; padding: 6px 4px; }
+  .nav-btn { min-width: 60px; padding: 5px 6px; }
+  .nav-btn-label { font-size: 0.55rem; }
+  .terminal-output { font-size: 10px; }
+  .term-btn { font-size: 9px; padding: 4px 8px; }
 }

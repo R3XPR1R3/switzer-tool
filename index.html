@@ -86,6 +86,7 @@
     <!-- Settings panel (converter options) -->
     <section class="instrument-panel" id="instrumentPanel">
       <div class="instrument-body">
+        <div class="scratch-overlay"></div>
         <div class="instrument-screen">
           <div class="screen-filter"></div>
           <div class="screen-content" id="settingsContent">
@@ -129,6 +130,7 @@
         <!-- Processing chamber with digital display -->
         <div class="processor" id="processingChamber">
           <div class="processor-housing">
+            <div class="scratch-overlay"></div>
             <div class="digital-display">
               <div class="display-screen">
                 <div class="scanline-overlay"></div>
@@ -163,6 +165,7 @@
     <!-- Preview -->
     <section class="preview-panel" id="previewPanel" style="display:none">
       <div class="instrument-body">
+        <div class="scratch-overlay"></div>
         <div class="instrument-screen">
           <div class="screen-filter"></div>
           <div class="preview-content" id="previewContent"></div>
@@ -185,19 +188,22 @@
     <!-- Terminal info block -->
     <section class="terminal-section" id="terminalSection">
       <div class="terminal-housing">
+        <div class="scratch-overlay"></div>
         <div class="terminal-bezel">
           <div class="terminal-screen">
             <div class="crt-filter"></div>
             <div class="terminal-output" id="terminalOutput">
               <span class="terminal-cursor">_</span>
             </div>
+            <div class="terminal-buttons">
+              <button class="term-btn" data-cmd="about">/about</button>
+              <button class="term-btn" data-cmd="help">/help</button>
+              <button class="term-btn" data-cmd="why">/why</button>
+              <button class="term-btn" data-cmd="security">/security</button>
+              <button class="term-btn" data-cmd="story">/story</button>
+              <button class="term-btn" data-cmd="funcs">/funcs</button>
+            </div>
           </div>
-        </div>
-        <div class="terminal-buttons">
-          <button class="term-btn" data-cmd="about">/about</button>
-          <button class="term-btn" data-cmd="help">/help</button>
-          <button class="term-btn" data-cmd="wasm">/wasm</button>
-          <button class="term-btn" data-cmd="security">/security</button>
         </div>
         <div class="terminal-label">ИНФО-ТЕРМИНАЛ</div>
       </div>
